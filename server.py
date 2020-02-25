@@ -19,20 +19,24 @@ UNKNOWN_STATUS = 'UNKNOWN STATUS'
 
 
 class Server:
+    """Entire backend of typeRacer, syncs connected clients, determines winners, checks for client input continuously"""
     def __init__(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.port = 5557
         self.ip = '127.0.0.1'
         self.shutdown_signal = False
-        self.gameover_signal = False
 
         self.connected_clients = []
-        self.client_threads = []
 
     def mainLoop(self):
+        """Continuously checks for input from client
+
+        In a singular loop, if it has a response will check who sent it, add them to connected_clients[] if not found,
+        and calls interpretCall() to act on the data the client sent
+        """
         while not self.shutdown_signal:
             try:
-                client_data, client_addr = self.checkForResponse()
+                client_data, client_addr = self.server.recvfrom(1024)
                 self.checkClient(client_addr)
 
                 self.interpretCall(client_data.decode('UTF-8'), client_addr)
@@ -41,10 +45,6 @@ class Server:
             except OSError:
                 self.shutdown()
                 break
-
-    def checkForResponse(self):
-        client_data, client_addr = self.server.recvfrom(1024)
-        return client_data, client_addr
 
     def checkClient(self, client_addr):
         if client_addr not in [client.address for client in self.connected_clients]:
@@ -121,6 +121,7 @@ class Server:
 
 
 class ClientData:
+    """Class to store all data from a singular client in 1 place"""
     def __init__(self, address):
         self.address = address
 

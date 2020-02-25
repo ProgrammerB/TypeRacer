@@ -140,7 +140,6 @@ class TypeRacer(tk.Tk):
             server_call, data = server_call.split('|', 1)
 
         if server_call == server.GAME_START:
-            print(server_call)
             self.flags[GAME_RUNNING] = True
             self.player_stats[SERVER_INPUT] = data if data else 'Error retrieving text'
             self.frames[GameScreen].text_to_type.configure(text=self.player_stats[SERVER_INPUT])
