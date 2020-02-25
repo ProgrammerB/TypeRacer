@@ -195,6 +195,7 @@ class MainMenu(tk.Frame):
         tk.Frame.__init__(self, parent)
         host_name, ip, port = controller.server.getHostInfo()
 
+        # set some stylistic feautures for the Main Menu frame
         MainMenu.config(self, bg="black")
         label = tk.Label(self, bg="black", fg="#abb0b4", text="Type Racer", font=("Verdana", 48))
         label.pack(pady=10, padx=10)
@@ -246,6 +247,7 @@ class JoinGame(tk.Frame):
         return_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
 
     def startGameAsClient(self, raw_server_info):
+        # if the input is not empty - take input and split input into ip and port variables
         if raw_server_info:
             try:
                 ip, port = raw_server_info.split(':', 1)
@@ -255,6 +257,8 @@ class JoinGame(tk.Frame):
                 self.controller.clientSetup((ip, int(port)))
                 self.controller.listener_thread = thread.Thread(target=self.controller.serverListener,
                                                                 args=(ip, int(port))).start()
+            # if an error is thrown - either it did not connect or the split couldn't happen
+            # display message to user to change input
             except:
                 label = tk.Label(self,
                                  text='Could not connect - Format may be incorrect',
@@ -262,7 +266,7 @@ class JoinGame(tk.Frame):
                                  fg='red')
                 label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
                 self.after(4000, label.destroy)
-
+        # if the input is empty display to the user that it is empty for 4 seconds
         else:
             label = tk.Label(self,
                              text='Nothing was entered...',
@@ -283,6 +287,8 @@ class HostGame(tk.Frame):
                          font=MAIN_TITLE_FONT)
         title.place(relx=0.5, rely=0.1, anchor=tk.CENTER)
 
+        # displays the IP of the user and the port number which will be used
+        # players who hit join game will type this information into an input box
         help_text = tk.Text(self, bd=1, bg='white smoke', fg='black',
                             height=7, width=40,
                             wrap=tk.WORD, padx=5, pady=5)
@@ -308,6 +314,7 @@ class HostGame(tk.Frame):
         return_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
 
 
+# Help page frame that is brought to the front when 'Help' is pressed on the main menu
 class Help(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -341,6 +348,8 @@ class Help(tk.Frame):
         temp_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
 
 
+# frame where the game actually takes place between players and the host
+# includes timer, input box, prompt, and all functions related
 class GameScreen(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
