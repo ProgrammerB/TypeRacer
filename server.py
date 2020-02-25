@@ -112,11 +112,11 @@ class Server:
         lines = open(fname).read().splitlines()
         return random.choice(lines)
 
-    def updateClient(self, client_addr, score, isFinished):
+    def updateClient(self, client_addr, score, is_finished):
         client = self.findClient(client_addr) if self.findClient(client_addr) else print('Client {} not found'.format(client_addr))
         client.score = score
         print('Score: {}'.format(client.score))
-        client.isFinished = isFinished
+        client.is_inished = is_finished
 
     def findClient(self, client_addr):
         for client in self.connected_clients:
