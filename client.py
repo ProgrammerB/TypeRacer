@@ -47,7 +47,7 @@ class TypeRacer(tk.Tk):
             FINISH_TIME: 0.0,
             ACCURACY: 0.0,
             SCORE: 0.0,
-            USER_INPUT: 'None',
+            USER_INPUT: 'Get Ready',
             SERVER_INPUT: 'None'
         }
 
@@ -294,7 +294,7 @@ class GameScreen(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        self.timer = '0.00s'
+        self.timer = 'Waiting on Host to Start Game'
         self.tic = 0.00
         self.finish_time = 0.00
         self.stop_threads = False
