@@ -1,7 +1,4 @@
 import socket
-import threading as thread
-import datetime
-from functools import partial
 
 # Server Calls
 HOST_CONNECT = 'HOST_CONNECT'
