@@ -207,17 +207,17 @@ class JoinGame(tk.Frame):
                                                                 args=(ip, int(port))).start()
             except:
                 label = tk.Label(self,
-                        text='Could not connect - Format may be incorrect',
-                        font=('Verdana',11),
-                        fg='red')
+                                 text='Could not connect - Format may be incorrect',
+                                 font=('Verdana', 11),
+                                 fg='red')
                 label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
                 self.after(4000, label.destroy)
 
         else:
             label = tk.Label(self,
-                                text='Nothing was entered...',
-                                font=('Verdana', 11),
-                                fg='red')
+                             text='Nothing was entered...',
+                             font=('Verdana', 11),
+                             fg='red')
             label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
             self.after(4000, label.destroy)
 
@@ -261,24 +261,25 @@ class Help(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         text = tk.Text(self, font=("Verdana", 11))
-        text.insert(tk.INSERT, '                                                     How To Play \'TypeRacer\'                         \n'
-                               '_______________________________________________________________________                                \n'
-                               '                                                                HOST                                   \n'
-                               '1. Press "Host Game" on the Main Menu                                             \n'
-                               '2. Give the displayed IP and port number                                          \n'
-                               '3. When all players have connected hit start, and type                            \n'
-                               '------------------------------------------------------------------------------------------------------\n'
-                               '                                                               PLAYER                                 \n'
-                               '1. Press "Join Game" on the Main Menu                                             \n'
-                               '2. Get the IP number and port number from the Host                                \n'
-                               '      -type it in in format [IP #]:[port #]                                       \n'
-                               '3. Once the host starts the game, a sentence will popup with the text box below it\n'
-                               '4. Once done typing, HIT ENTER                                                    \n'
-                               '5. Once all players are finished, score is determined by accuracy and time to     \n'
-                               '   answer.  Winner is then displayed along with all of your stats                 \n'
-                               '                                                                                  \n'
-                               '_______________________________________________________________________\n'
-                                )
+        text.insert(tk.INSERT,
+                    '                                                     How To Play \'TypeRacer\'                         \n'
+                    '_______________________________________________________________________                                \n'
+                    '                                                                HOST                                   \n'
+                    '1. Press "Host Game" on the Main Menu                                             \n'
+                    '2. Give the displayed IP and port number                                          \n'
+                    '3. When all players have connected hit start, and type                            \n'
+                    '------------------------------------------------------------------------------------------------------\n'
+                    '                                                               PLAYER                                 \n'
+                    '1. Press "Join Game" on the Main Menu                                             \n'
+                    '2. Get the IP number and port number from the Host                                \n'
+                    '      -type it in in format [IP #]:[port #]                                       \n'
+                    '3. Once the host starts the game, a sentence will popup with the text box below it\n'
+                    '4. Once done typing, HIT ENTER                                                    \n'
+                    '5. Once all players are finished, score is determined by accuracy and time to     \n'
+                    '   answer.  Winner is then displayed along with all of your stats                 \n'
+                    '                                                                                  \n'
+                    '_______________________________________________________________________\n'
+                    )
         text.configure(state='disable')
         text.pack()
 
@@ -301,7 +302,7 @@ class GameScreen(tk.Frame):
         self.temp_button = ttk.Button(self, text="Main Menu", command=lambda: controller.showFrame(MainMenu))
         self.temp_button.place(relx=0.50, rely=0.5, anchor=tk.CENTER)
 
-        self.time_display = tk.Label(self, font=('Verdana', 20),text='0.00s'.format(self.timer))
+        self.time_display = tk.Label(self, font=('Verdana', 20), text='0.00s'.format(self.timer))
         self.time_display.place(relx=.50, rely=.10, anchor=tk.CENTER)
         self.timer_thread = thread.Thread(target=self.runTimer)
 
@@ -353,8 +354,6 @@ class PostGame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-
-        computer_name, ip_addr, port_number = controller.server.getHostInfo()
 
         self.winner_ip = 'None'
 
