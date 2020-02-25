@@ -124,7 +124,6 @@ class TypeRacer(tk.Tk):
             print(server_call)
             self.host_server.sendto(server.RECEIVE_GAME_OVER.encode('UTF-8'), (ip, port))
         elif server_call == server.WINNER:
-            print('[{}] {}'.format(data, server_call))
             if str(self.client_ip) == data:
                 self.flags[WINNER] = True
             else:
@@ -377,6 +376,7 @@ class PostGame(tk.Frame):
         self.user_stats.place(relx=0.5, rely=0.75, anchor=tk.CENTER)
 
     def updateText(self):
+        self.user_stats.configure(state='normal')
         if self.controller.flags[WINNER]:
             self.final_result = tk.Label(self, text='VICTORY', font=('Verdana', 48))
             self.final_result.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
@@ -387,7 +387,7 @@ class PostGame(tk.Frame):
             self.final_result.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
             self.label = tk.Label(self, text="{} won the game".format(self.winner_ip), font=('Verdana', 18))
             self.label.pack(pady=10, padx=10)
-        self.user_stats.configure(state='normal')
+
         self.user_stats.delete('1.0', 'end')
         self.user_stats.insert(tk.INSERT, '                      :YOUR STATS:                   \n\n'
                                           'Time to answer : {:.4f} seconds\n'
