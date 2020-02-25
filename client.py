@@ -244,8 +244,8 @@ class Help(tk.Frame):
                                '3. Once the host starts the game, a sentence will popup with the text box below it\n'
                                '4. Once done typing, HIT ENTER                                                    \n'
                                '5. Once all players are finished, score is determined by accuracy and time to     \n'
-                               '   answer accuracy and time to answer.  Winner is then displayed   along with all \n'
-                               '   of your stats                                                                  \n'
+                               '   answer.  Winner is then displayed along with all of your stats                 \n'
+                               '                                                                                  \n'
                                '_______________________________________________________________________\n'
                                 )
         text.configure(state='disable')
