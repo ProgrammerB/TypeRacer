@@ -240,7 +240,7 @@ class Help(tk.Frame):
                                '                                                               PLAYER                                 \n'
                                '1. Press "Join Game" on the Main Menu                                             \n'
                                '2. Get the IP number and port number from the Host                                \n'
-                               '      -type it in in format [IP #]:[port #]                                       \n'
+                               '      -type it in the format [IP #]:[port #]                                      \n'
                                '3. Once the host starts the game, a sentence will popup with the text box below it\n'
                                '4. Once done typing, HIT ENTER                                                    \n'
                                '5. Once all players are finished, score is determined by accuracy and time to     \n'
