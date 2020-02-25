@@ -15,6 +15,7 @@ CONNECT_FAIL = 'CONNECT_FAIL'
 IDLE = 'IDLE'
 WINNER = 'WINNER'
 LOSER = 'LOSER'
+RECEIVE_GAME_OVER = 'REC_GAME_OVER'
 
 
 class Server:
@@ -33,14 +34,18 @@ class Server:
             try:
                 client_data, client_addr = self.checkForResponse()
                 self.checkClient(client_addr)
+                print(all(client.rec_game_over for client in self.connected_clients))
 
                 self.interpretCall(client_data.decode('UTF-8'), client_addr)
-                self.checkGameOver()
+                if self.checkGameOver() and all(client.recGameOver for client in self.connected_clients):
+                    print(all(client.rec_game_over for client in self.connected_clients))
+                    break
             except OSError:
                 self.shutdown()
                 break
 
     def checkForResponse(self):
+        self.server.settimeout(1)
         client_data, client_addr = self.server.recvfrom(1024)
         return client_data, client_addr
 
@@ -59,12 +64,18 @@ class Server:
             self.broadcast(GAME_START + '|' + self.randomSentence('bee_movie_script.txt'))
         elif server_call == GAME_OVER:
             self.updateClient(client_addr, data, isFinished=True)
+        elif server_call == RECEIVE_GAME_OVER:
+            client = self.findClient(client_addr)
+            client.rec_game_over = True
         elif server_call == IDLE:
             pass
 
     def checkGameOver(self):
-        if all(client.isFinished for client in self.connected_clients):
+        if all(client.is_finished for client in self.connected_clients):
+            print('Found game over')
+            self.checkWinner()
             self.broadcast(GAME_OVER)
+            return True
 
     def broadcast(self, server_call):
         for client in self.connected_clients:
@@ -93,27 +104,27 @@ class Server:
         self.server.close()
 
     def checkWinner(self):
-        self.highest_score = 0.0
-        self.highest_score_ip = ""
-        for i in range(self.connected_client):
-            current_score = ClientData(self.connected_clients).score
-            if current_score > self.highest_score:
-                self.highest_score_ip = self.connected_clients[i]
-                self.highest_score = current_score
-        print("{} - highest score".format(self.highest_score))
-        print("{} - highest score ip".format(self.highest_score_ip))
-        return self.highest_score_ip
+        winner = [high_score for high_score in self.connected_clients if high_score.score == max(client.score for client in self.connected_clients)]
+        winner[0].isWinner = True
+        print('Winner is: {}'.format(winner[0].address))
 
     def randomSentence(self, fname):
         lines = open(fname).read().splitlines()
         return random.choice(lines)
 
     def updateClient(self, client_addr, score, isFinished):
+        client = self.findClient(client_addr) if self.findClient(client_addr) else print('Client {} not found'.format(client_addr))
+        client.score = score
+        print('Score: {}'.format(client.score))
+        client.isFinished = isFinished
+
+    def findClient(self, client_addr):
         for client in self.connected_clients:
             if client_addr == client.address:
-                client.score = score
-                print('Score: {}'.format(client.score))
-                client.isFinished = isFinished
+                return client
+        else:
+            return False
+
 
 
 class ClientData:
@@ -122,16 +133,9 @@ class ClientData:
         self.name = nickname
 
         self.score = 0.0
-        self.isWinner = False
-        self.isFinished = False
-
-
-def prepData(data):
-    data.decode('UTF-8')
-    data = repr(data)[2:-1]
-    data.strip()
-
-    return data
+        self.is_winner = False
+        self.is_finished = False
+        self.rec_game_over = False
 
 
 if __name__ == '__main__':
