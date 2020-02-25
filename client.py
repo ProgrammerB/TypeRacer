@@ -229,15 +229,15 @@ class Help(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        text = tk.Text(self)
-        text.insert(tk.INSERT, '                                How To Play \'TypeRacer\'                         \n'
-                               '________________________________________________________________________________  \n'
-                               '                                        HOST                                      \n'
+        text = tk.Text(self, font=("Verdana", 11))
+        text.insert(tk.INSERT, '                                                     How To Play \'TypeRacer\'                         \n'
+                               '_______________________________________________________________________                                \n'
+                               '                                                                HOST                                   \n'
                                '1. Press "Host Game" on the Main Menu                                             \n'
                                '2. Give the displayed IP and port number                                          \n'
                                '3. When all players have connected hit start, and type                            \n'
-                               '--------------------------------------------------------------------------------  \n'
-                               '                                       Client                                     \n'
+                               '------------------------------------------------------------------------------------------------------\n'
+                               '                                                                Client                                \n'
                                '1. Press "Join Game" on the Main Menu                                             \n'
                                '2. Get the IP number and port number from the Host                                \n'
                                '      -type it in in format [IP #]:[port #]                                       \n'
@@ -246,7 +246,7 @@ class Help(tk.Frame):
                                '5. Once all players are finished, score is determined by accuracy and time to     \n'
                                '   answer accuracy and time to answer.  Winner is then displayed   along with all \n'
                                '   of your stats                                                                  \n'
-                               '________________________________________________________________________________  \n'
+                               '_______________________________________________________________________\n'
                                 )
         text.configure(state='disable')
         text.pack()
