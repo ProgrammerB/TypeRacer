@@ -34,7 +34,7 @@ class Server:
             try:
                 client_data, client_addr = self.checkForResponse()
                 self.checkClient(client_addr)
-                # print(all(client.rec_game_over for client in self.connected_clients))
+                print(all(client.rec_game_over for client in self.connected_clients))
 
                 self.interpretCall(client_data.decode('UTF-8'), client_addr)
                 if self.checkGameOver():

@@ -110,6 +110,7 @@ class TypeRacer(tk.Tk):
             server_call, data = server_call.split('|', 1)
 
         if server_call == server.GAME_START:
+            print(server_call)
             self.flags[GAME_RUNNING] = True
             self.player_stats[SERVER_INPUT] = data
             self.frames[GameScreen].text_to_type.configure(text=self.player_stats[SERVER_INPUT])
@@ -118,8 +119,10 @@ class TypeRacer(tk.Tk):
                 self.flags[TIMER_RUNNING] = True
                 self.frames[GameScreen].runTimerThread()
         elif server_call == server.GAME_OVER:
+            print(server_call)
             self.host_server.sendto(server.RECEIVE_GAME_OVER.encode('UTF-8'), (ip, port))
         elif server_call == server.WINNER:
+            print(server_call)
             if str(self.client_ip) == data:
                 self.flags[WINNER] = True
             else:
