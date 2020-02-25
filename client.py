@@ -136,30 +136,19 @@ class MainMenu(tk.Frame):
         tk.Frame.__init__(self, parent)
         host_name, ip, port = controller.server.getHostInfo()
 
-        label = tk.Label(self,
-                         text='Type Racer',
-                         font=('Verdana', 12))
+        MainMenu.config(self, bg="black")
+        label = tk.Label(self, bg="black", fg="#abb0b4", text="Type Racer", font=("Verdana", 48))
         label.pack(pady=10, padx=10)
 
-        join_button = ttk.Button(self,
-                                 text='Join Game',
-                                 command=lambda: controller.showFrame(JoinGame))
-        join_button.place(relx=0.50, rely=0.6, anchor=tk.CENTER)
+        join_button = ttk.Button(self, text="Join Game", command=lambda: controller.showFrame(JoinGame))
+        join_button.place(height=40, width=300, relx=0.50, rely=0.35, anchor=tk.CENTER)
 
-        host_button = ttk.Button(self,
-                                 text='Host Game',
+        host_button = ttk.Button(self, text="Host Game",
                                  command=lambda: [controller.showFrame(HostGame), controller.runServer((ip, port))])
-        host_button.place(relx=0.50, rely=0.75, anchor=tk.CENTER)
+        host_button.place(height=40, width=300, relx=0.50, rely=0.50, anchor=tk.CENTER)
 
-        help_button = ttk.Button(self,
-                                 text='Help',
-                                 command=lambda: controller.showFrame(Help))
-        help_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
-
-        post_game = ttk.Button(self,
-                               text='Post Game Test',
-                               command=lambda: controller.showFrame(PostGame))
-        post_game.place(relx=0.1, rely=0.1, anchor=tk.CENTER)
+        help_button = ttk.Button(self, text="Help", command=lambda: controller.showFrame(Help))
+        help_button.place(height=40, width=300, relx=0.50, rely=0.65, anchor=tk.CENTER)
 
 
 class JoinGame(tk.Frame):
@@ -241,8 +230,25 @@ class Help(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         text = tk.Text(self)
-        text.insert(tk.INSERT, 'Hello.....')
-        text.insert(tk.END, 'Bye Bye.....')
+        text.insert(tk.INSERT, '                                How To Play \'TypeRacer\'                         \n'
+                               '________________________________________________________________________________  \n'
+                               '                                        HOST                                      \n'
+                               '1. Press "Host Game" on the Main Menu                     \n'
+                               '2. Give the displayed IP and port number                  \n'
+                               '3. When all players have connected hit start, and type    \n'
+                               '--------------------------------------------------------------------------------\n'
+                               '                                       Client                                    \n'
+                               '1. Press "Join Game" on the Main Menu                     \n'
+                               '2. Get the IP number and port number from the Host        \n'
+                               '      -type it in in format [IP #]:[port #]               \n'
+                               '3. Once the host starts the game, a sentence will popup w/\n'
+                               '    a text box below                                      \n'
+                               '4. Once done typing, HIT ENTER                            \n'
+                               '5. Once all players are finished, score is determined by  \n'
+                               '    accuracy and time to answer.  Winner is then displayed\n'
+                               '    along with all of your stats                           \n'
+                               '________________________________________________________________________________\n'
+                                )
         text.pack()
 
         temp_button = ttk.Button(self,
@@ -344,13 +350,13 @@ class PostGame(tk.Frame):
         self.user_stats = tk.Text(self, bd=1, bg='white smoke', fg='black',
                                   height=7, width=60, wrap=tk.WORD, padx=5, pady=5)
         self.user_stats.insert(tk.INSERT, '                      :YOUR STATS:                   \n\n'
-                                          'Time to answer : {} seconds\n'
-                                          'Score          : {} points\n'
-                                          'Accuracy       : {}%\n'
+                                          'Time to answer : {:.4f} seconds\n'
+                                          'Score          : {:.3f} points\n'
+                                          'Accuracy       : {:.4f}%\n'
                                           'Your Sentence  : {}\n'
                                           'Server Sentence: {}'
                                .format(self.controller.player_stats[FINISH_TIME], self.controller.player_stats[SCORE],
-                                       self.controller.player_stats[ACCURACY] * 10,
+                                       self.controller.player_stats[ACCURACY] * 100,
                                        self.controller.player_stats[USER_INPUT],
                                        self.controller.player_stats[SERVER_INPUT]))
 
@@ -360,13 +366,13 @@ class PostGame(tk.Frame):
         self.user_stats.configure(state='normal')
         self.user_stats.delete('1.0', 'end')
         self.user_stats.insert(tk.INSERT, '                      :YOUR STATS:                   \n\n'
-                                          'Time to answer : {} seconds\n'
-                                          'Score          : {} points\n'
-                                          'Accuracy       : {}%\n'
+                                          'Time to answer : {:.4f} seconds\n'
+                                          'Score          : {:.3f} points\n'
+                                          'Accuracy       : {:.4f}%\n'
                                           'Your Sentence  : {}\n'
                                           'Server Sentence: {}'
                                .format(self.controller.player_stats[FINISH_TIME], self.controller.player_stats[SCORE],
-                                       self.controller.player_stats[ACCURACY] * 10,
+                                       self.controller.player_stats[ACCURACY] * 100,
                                        self.controller.player_stats[USER_INPUT],
                                        self.controller.player_stats[SERVER_INPUT]))
         self.user_stats.configure(state='disable')

@@ -100,6 +100,8 @@ class Server:
             if current_score > self.highest_score:
                 self.highest_score_ip = self.connected_clients[i]
                 self.highest_score = current_score
+        print("{} - highest score".format(self.highest_score))
+        print("{} - highest score ip".format(self.highest_score_ip))
         return self.highest_score_ip
 
     def randomSentence(self, fname):
