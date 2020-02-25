@@ -36,12 +36,14 @@ class Server:
         """
         while not self.shutdown_signal:
             try:
+                self.server.settimeout(0.5)
                 client_data, client_addr = self.server.recvfrom(1024)
                 self.checkClient(client_addr)
 
-                self.interpretCall(client_data.decode('UTF-8'), client_addr)
-                if self.checkGameOver():
-                    break
+                if client_data:
+                    self.interpretCall(client_data.decode('UTF-8'), client_addr)
+                    if self.checkGameOver():
+                        break
             except OSError:
                 self.shutdown()
                 break
