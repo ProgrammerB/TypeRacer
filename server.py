@@ -91,6 +91,13 @@ class Server:
         self.closeThreads()
         self.server.close()
 
+    def checkWinner(self):
+        self.highest_score = 0.0
+        for i in range(self.connected_client):
+            current_score = ClientData(self.connected_clients).score
+            if current_score > self.highest_score:
+                self.highest_score = current_score
+        return self.highest_score
 
 class ClientData:
     def __init__(self, address, nickname=None):
