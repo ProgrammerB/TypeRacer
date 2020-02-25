@@ -88,7 +88,7 @@ class TypeRacer(tk.Tk):
         else:
             server_call = server.IDLE
 
-        self.host_server.sendto(server_call, server_info)
+        self.host_server.sendto(server_call.encode('UTF-8'), server_info)
         self.showFrame(GameScreen)
 
     def serverListener(self, ip, port):
@@ -97,11 +97,11 @@ class TypeRacer(tk.Tk):
                 if self.flags[RECENT_CONNECTION]:
                     self.flags[RECENT_CONNECTION] = False
 
-                    self.host_server.settimeout(5)
+                    self.server.server.settimeout(5)
                     server_call, ip_addr = self.host_server.recvfrom(1024)
                     self.interpretServer(server_call)
                 else:
-                    self.host_server.sendto(server.IDLE, (ip, port))
+                    self.host_server.sendto(server.IDLE.encode('UTF-8'), (ip, port))
                     self.flags[RECENT_CONNECTION] = True
             except socket.error:
                 pass
@@ -314,6 +314,10 @@ class GameScreen(tk.Frame):
         self.controller.player_stats[SCORE] = self.getScore(self.controller.player_stats[USER_INPUT],
                                                             self.controller.player_stats[SERVER_INPUT])
         print(self.controller.player_stats[FINISH_TIME])
+
+        self.controller.host_server.sendto((server.GAME_OVER + '.' +
+                                            str(self.controller.player_stats[SCORE])).encode('UTF-8'),
+                                           (self.controller.server.ip, self.controller.server.port))
 
         self.controller.frames[PostGame].updateText()
         self.controller.showFrame(PostGame)
