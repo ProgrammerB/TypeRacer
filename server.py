@@ -56,7 +56,7 @@ class Server:
         elif server_call == GAME_START:
             self.broadcast(GAME_START)
         elif server_call == GAME_OVER:
-            pass # TODO: Implement GAME_OVER call to store score and flag in appropriate ClientData object
+            self.updateClient(client_addr, data, isFinished=True)
         elif server_call == IDLE:
             pass
             # self.server.sendto(IDLE, client_addr)
@@ -83,13 +83,8 @@ class Server:
 
         self.mainLoop()
 
-    def closeThreads(self):
-        for th in self.client_threads:
-            th.join()
-
     def shutdown(self):
         self.shutdown_signal = True
-        self.closeThreads()
         self.server.close()
 
     def checkWinner(self):
@@ -105,6 +100,13 @@ class Server:
     def random_sentence(fname):
         lines = open(fname).read().splitlines()
         return random.choice(lines)
+
+    def updateClient(self, client_addr, score, isFinished):
+        for client in self.connected_clients:
+            if client_addr == client.address:
+                client.score = score
+                client.isFinished = isFinished
+
 
 class ClientData:
     def __init__(self, address, nickname=None):
