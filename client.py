@@ -204,7 +204,7 @@ class JoinGame(tk.Frame):
             try:
                 ip, port = raw_server_info.split(':', 1)
                 self.controller.connect_ip = ip
-                self.controller.connect_port = port
+                self.controller.connect_port = int(port)
                 self.controller.client_flag = True
                 self.controller.clientSetup((ip, int(port)))
                 self.controller.listener_thread = thread.Thread(target=self.controller.serverListener,
