@@ -237,7 +237,7 @@ class Help(tk.Frame):
                                '2. Give the displayed IP and port number                                          \n'
                                '3. When all players have connected hit start, and type                            \n'
                                '------------------------------------------------------------------------------------------------------\n'
-                               '                                                                Client                                \n'
+                               '                                                               PLAYER                                 \n'
                                '1. Press "Join Game" on the Main Menu                                             \n'
                                '2. Get the IP number and port number from the Host                                \n'
                                '      -type it in in format [IP #]:[port #]                                       \n'
