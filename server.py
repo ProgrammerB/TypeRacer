@@ -61,7 +61,7 @@ class Server:
             self.broadcast(GAME_START + '|' + self.randomSentence('bee_movie_script.txt'))
         elif server_call == GAME_OVER:
             print('Game over interpreted')
-            self.updateClient(client_addr, data, isFinished=True)
+            self.updateClient(client_addr, data, is_finished=True)
             self.server.sendto(GAME_OVER.encode('UTF-8'), client_addr)
         elif server_call == RECEIVE_GAME_OVER:
             print('made it to receive game over')
