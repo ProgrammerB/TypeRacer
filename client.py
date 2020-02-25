@@ -36,6 +36,9 @@ SERVER_INPUT = 'SERVER'
 class TypeRacer(tk.Tk):
     """Bases class that manages important client functions and server interactions with the client
 
+    In the frame classes [MainMenu, JoinGame, HostGame, etc...] TypeRacer can be referenced via [controller] variable in
+    their respective classes
+
     Used Resources
     --------------
     https://pythonprogramming.net/object-oriented-programming-crash-course-tkinter/?completed=/tkinter-depth-tutorial-making-actual-program/
@@ -120,14 +123,16 @@ class TypeRacer(tk.Tk):
     def serverListener(self, ip, port):
         while not self.flags[SHUTDOWN]:
             try:
-                if self.flags[RECENT_CONNECTION]:
+                '''if self.flags[RECENT_CONNECTION]:
                     self.flags[RECENT_CONNECTION] = False
 
                     server_call, ip_addr = self.host_server.recvfrom(1024)
                     self.interpretServer(server_call.decode('UTF-8'), ip, port)
                 else:
                     self.host_server.sendto(server.IDLE.encode('UTF-8'), (ip, port))
-                    self.flags[RECENT_CONNECTION] = True
+                    self.flags[RECENT_CONNECTION] = True'''
+                server_call, ip_addr = self.host_server.recvfrom(1024)
+                self.interpretServer(server_call.decode('UTF-8'), ip, port)
             except socket.error:
                 pass
 
@@ -172,7 +177,14 @@ class TypeRacer(tk.Tk):
 
 
 class MainMenu(tk.Frame):
-    ''''''
+    """Default window for TypeRacer class
+
+    GUI Functionality
+    -----------------
+    join_button: Moves JoinGame frame to the front
+    host_button: Moves HostGame frame to the front, and starts the server via controller.runServer()
+    help_button: Moves HelpMenu frame to the front
+    """
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         host_name, ip, port = controller.server.getHostInfo()
