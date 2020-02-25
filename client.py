@@ -124,6 +124,7 @@ class TypeRacer(tk.Tk):
             self.flags[GAME_RUNNING] = False
             self.host_server.sendto(server.RECEIVE_GAME_OVER.encode('UTF-8'), (ip, port))
         elif server_call == server.WINNER:
+            print('Mine: {} Winner: {}'.format(self.client_ip, data))
             if str(self.client_ip) == data:
                 self.flags[WINNER] = True
             else:
