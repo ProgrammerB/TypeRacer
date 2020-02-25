@@ -75,7 +75,6 @@ class Server:
             self.broadcast(WINNER + '|' + str(self.checkWinner()))
             return True
 
-    # Sends data to every client the server has on its list
     def broadcast(self, server_call):
         for client in self.connected_clients:
             self.server.sendto(server_call.encode('UTF-8'), client.address)
