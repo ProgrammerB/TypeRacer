@@ -35,7 +35,10 @@ HOW TO USE TYPERACER:
 				 everyone is finished
 CONTRIBUTORS:
 	Braxton Laster:
-		-
+		-Class system for tkinter GUI
+		-Interpreting server data 
+		-MainMenu, JoinGame, HostGame classes
+		-Syncing up clients on the server so everyone gets the same text and is in 1 'lobby' to determine winner
 	Benjamin Rader:
 		-design of tkinter gui and functionalites such as timer, main menu setup, help page,
 		 results page, and the text box during the game.

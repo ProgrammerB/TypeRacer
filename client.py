@@ -1,3 +1,8 @@
+"""
+Developers: Braxton Laster, Ben Rader
+Desc: Example of UDP between 2 computers via a GUI typing game
+"""
+
 import socket
 import sys
 import tkinter as tk
@@ -29,6 +34,13 @@ SERVER_INPUT = 'SERVER'
 
 
 class TypeRacer(tk.Tk):
+    """Bases class that manages important client functions and server interactions with the client
+
+    Used Resources
+    --------------
+    https://pythonprogramming.net/object-oriented-programming-crash-course-tkinter/?completed=/tkinter-depth-tutorial-making-actual-program/
+    - Used this to get the basic idea of using tkinter in terms of classes
+    """
     def __init__(self):
         tk.Tk.__init__(self)
         self.protocol('WM_DELETE_WINDOW', self.onClosing)
@@ -72,10 +84,16 @@ class TypeRacer(tk.Tk):
         self.showFrame(MainMenu)
 
     def showFrame(self, requested_frame):
+        """Takes in a frame class and raises it to the front of the GUI"""
         frame = self.frames[requested_frame]
         frame.tkraise()
 
     def runServer(self, server_info):
+        """Starts 2 server-related threads and tells client it's the host device
+
+        self.server_thread: Starts running the game server that clients connect to
+        self.listener_thread: Starts listening for server input to interpret
+        """
         self.flags[HOST] = True
         self.server_thread = thread.Thread(target=self.server.serverSetup,
                                            args=server_info).start()
@@ -83,12 +101,18 @@ class TypeRacer(tk.Tk):
                                              args=server_info).start()
 
     def clientSetup(self, server_info):
+        """Sends initial connect msg to server and moves the actual gameplay screen to the front
+
+        If client is on same device as server then send a GAME_START signal to the server, otherwise tell the server
+        it is a client. This is because clientSetup() is called at different points depending on if the client has the
+        same ip with the server host.
+        """
         if self.flags[HOST]:
             server_call = server.GAME_START
         elif self.flags[CLIENT]:
             server_call = server.CLIENT_CONNECT
         else:
-            server_call = server.IDLE
+            server_call = server.UNKNOWN_STATUS
 
         self.host_server.sendto(server_call.encode('UTF-8'), server_info)
         self.showFrame(GameScreen)
@@ -148,6 +172,7 @@ class TypeRacer(tk.Tk):
 
 
 class MainMenu(tk.Frame):
+    ''''''
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         host_name, ip, port = controller.server.getHostInfo()

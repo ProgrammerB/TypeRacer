@@ -1,8 +1,10 @@
+"""
+Developers: Braxton Laster, Ben Rader
+Desc: Server side of UDP example, handles syncing clients together
+"""
+
 import socket
 import random
-import threading as thread
-import datetime
-from functools import partial
 
 # Server Calls
 HOST_CONNECT = 'HOST_CONNECT'
@@ -16,6 +18,7 @@ IDLE = 'IDLE'
 WINNER = 'WINNER'
 LOSER = 'LOSER'
 RECEIVE_GAME_OVER = 'REC_GAME_OVER'
+UNKNOWN_STATUS = 'UNKNOWN STATUS'
 
 
 class Server:
@@ -48,7 +51,6 @@ class Server:
 
     def checkClient(self, client_addr):
         if client_addr not in [client.address for client in self.connected_clients]:
-            print('Added client {}'.format(client_addr))
             self.connected_clients.append(ClientData(client_addr))
 
     def interpretCall(self, server_call, client_addr):
@@ -60,11 +62,9 @@ class Server:
         elif server_call == GAME_START:
             self.broadcast(GAME_START + '|' + self.randomSentence('bee_movie_script.txt'))
         elif server_call == GAME_OVER:
-            print('Game over interpreted')
             self.updateClient(client_addr, data, is_finished=True)
             self.server.sendto(GAME_OVER.encode('UTF-8'), client_addr)
         elif server_call == RECEIVE_GAME_OVER:
-            print('made it to receive game over')
             client = self.findClient(client_addr)
             client.rec_game_over = True
         elif server_call == IDLE:
@@ -72,7 +72,6 @@ class Server:
 
     def checkGameOver(self):
         if all(client.rec_game_over for client in self.connected_clients):
-            print('Found game over')
             self.broadcast(WINNER + '|' + str(self.checkWinner()))
             return True
 
@@ -106,7 +105,6 @@ class Server:
     def checkWinner(self):
         winner = [high_score for high_score in self.connected_clients if high_score.score == max(client.score for client in self.connected_clients)]
         winner[0].is_winner = True
-        print(winner[0].address)
         return winner[0].address[0]
 
     def randomSentence(self, fname):
@@ -116,7 +114,6 @@ class Server:
     def updateClient(self, client_addr, score, is_finished):
         client = self.findClient(client_addr) if self.findClient(client_addr) else print('Client {} not found'.format(client_addr))
         client.score = score
-        print('Score: {}'.format(client.score))
         client.is_inished = is_finished
 
     def findClient(self, client_addr):
@@ -128,9 +125,8 @@ class Server:
 
 
 class ClientData:
-    def __init__(self, address, nickname=None):
+    def __init__(self, address):
         self.address = address
-        self.name = nickname
 
         self.score = 0.0
         self.is_winner = False
