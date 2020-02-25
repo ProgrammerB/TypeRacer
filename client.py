@@ -31,7 +31,7 @@ SERVER_INPUT = 'SERVER'
 class TypeRacer(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
-        self.protocol("WM_DELETE_WINDOW", self.onClosing)
+        self.protocol('WM_DELETE_WINDOW', self.onClosing)
         self.server = server.Server()
         self.server_thread = thread.Thread()
         self.listener_thread = thread.Thread()
@@ -132,27 +132,27 @@ class MainMenu(tk.Frame):
         host_name, ip, port = controller.server.getHostInfo()
 
         label = tk.Label(self,
-                         text="Type Racer",
-                         font=("Verdana", 12))
+                         text='Type Racer',
+                         font=('Verdana', 12))
         label.pack(pady=10, padx=10)
 
         join_button = ttk.Button(self,
-                                 text="Join Game",
+                                 text='Join Game',
                                  command=lambda: controller.showFrame(JoinGame))
         join_button.place(relx=0.50, rely=0.6, anchor=tk.CENTER)
 
         host_button = ttk.Button(self,
-                                 text="Host Game",
+                                 text='Host Game',
                                  command=lambda: [controller.showFrame(HostGame), controller.runServer((ip, port))])
         host_button.place(relx=0.50, rely=0.75, anchor=tk.CENTER)
 
         help_button = ttk.Button(self,
-                                 text="Help",
+                                 text='Help',
                                  command=lambda: controller.showFrame(Help))
         help_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
 
         post_game = ttk.Button(self,
-                               text="Post Game Test",
+                               text='Post Game Test',
                                command=lambda: controller.showFrame(PostGame))
         post_game.place(relx=0.1, rely=0.1, anchor=tk.CENTER)
 
@@ -185,7 +185,7 @@ class JoinGame(tk.Frame):
         connect_button.place(relx=0.5, rely=0.75, anchor=tk.CENTER)
 
         return_button = ttk.Button(self,
-                                   text="Main Menu",
+                                   text='Main Menu',
                                    command=lambda: controller.showFrame(MainMenu))
         return_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
 
@@ -218,6 +218,7 @@ class HostGame(tk.Frame):
                                     'Port          : {}'.format(host_name, server_ip, port_number))
 
         help_text.place(relx=0.5, rely=0.45, anchor=tk.CENTER)
+        help_text.configure(state='disable')
 
         start_button = ttk.Button(self,
                                   text='Start',
@@ -225,7 +226,7 @@ class HostGame(tk.Frame):
         start_button.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
         return_button = ttk.Button(self,
-                                   text="Main Menu",
+                                   text='Main Menu',
                                    command=lambda: controller.showFrame(MainMenu))
         return_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
 
@@ -235,12 +236,12 @@ class Help(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         text = tk.Text(self)
-        text.insert(tk.INSERT, "Hello.....")
-        text.insert(tk.END, "Bye Bye.....")
+        text.insert(tk.INSERT, 'Hello.....')
+        text.insert(tk.END, 'Bye Bye.....')
         text.pack()
 
         temp_button = ttk.Button(self,
-                                 text="Main Menu",
+                                 text='Main Menu',
                                  command=lambda: controller.showFrame(MainMenu))
         temp_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
 
@@ -250,11 +251,11 @@ class GameScreen(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        self.timer = "0.00s"
+        self.timer = '0.00s'
         self.tic = 0.00
         self.finish_time = 0.00
         self.stop_threads = False
-        self.controller.player_stats[SERVER_INPUT] = "Match This Sentence For Test"
+        self.controller.player_stats[SERVER_INPUT] = 'Match This Sentence For Test'
         self.user_input = ""
         self.score = 0
         self.accuracy = 0
@@ -262,11 +263,11 @@ class GameScreen(tk.Frame):
         self.temp_button = ttk.Button(self, text="Main Menu", command=lambda: controller.showFrame(MainMenu))
         self.temp_button.place(relx=0.50, rely=0.5, anchor=tk.CENTER)
 
-        self.time_display = tk.Label(self, text="0.00s".format(self.timer))
+        self.time_display = tk.Label(self, text='0.00s'.format(self.timer))
         self.time_display.place(relx=.50, rely=.10, anchor=tk.CENTER)
         self.timer_thread = thread.Thread(target=self.runTimer)
 
-        self.text_to_type = tk.Label(self, text="[TEXT GOES HERE]")
+        self.text_to_type = tk.Label(self, text='[TEXT GOES HERE]')
         self.text_to_type.place(relx=.50, rely=.30, anchor=tk.CENTER)
 
         self.typing_box = tk.Text(self)
@@ -285,17 +286,17 @@ class GameScreen(tk.Frame):
             time.sleep(.025)
 
     def retrieve_input(self, event=None):
-        user_input = self.typing_box.get("1.0", "end-1c")
+        user_input = self.typing_box.get('1.0', 'end-1c')
         user_input.strip('\n')
         return user_input
 
     def getScore(self, a, b):
-        similarity_metric = SequenceMatcher(lambda x: x == " ", a, b).ratio()
+        similarity_metric = SequenceMatcher(lambda x: x == ' ', a, b).ratio()
         self.controller.player_stats[ACCURACY] = similarity_metric
         score = ((similarity_metric * 1) ** 4 / (self.controller.player_stats[FINISH_TIME])) * 1000
         if similarity_metric is 1.0:
             score = ((similarity_metric * 1.5) ** 4 / (self.controller.player_stats[FINISH_TIME])) * 1000
-        print("{} is the similarity metric".format(similarity_metric))
+        print('{} is the similarity metric'.format(similarity_metric))
         return score
 
     def onEnterPressed(self, event=None):
@@ -307,8 +308,8 @@ class GameScreen(tk.Frame):
                                                             self.controller.player_stats[SERVER_INPUT])
         print(self.controller.player_stats[SCORE])
 
-        self.controller.host_server.sendto((server.GAME_OVER + '.' +
-                                            str(self.controller.player_stats[SCORE])).encode('UTF-8'),
+        self.controller.host_server.sendto((server.GAME_OVER + '|' +
+                                            '{:.3f}'.format(self.controller.player_stats[SCORE])).encode('UTF-8'),
                                            (self.controller.server.ip, self.controller.server.port))
 
         self.controller.frames[PostGame].updateText()
@@ -323,17 +324,17 @@ class PostGame(tk.Frame):
         computer_name, ip_addr, port_number = controller.server.getHostInfo()
         print(controller.player_stats[FINISH_TIME])
 
-        self.winner_ip = "10.20.0.161"  # TEST CODE: TO BE USED WITH IP FROM SERVER MSG
+        self.winner_ip = '10.20.0.161'  # TEST CODE: TO BE USED WITH IP FROM SERVER MSG
         print(ip_addr)
         if self.winner_ip == ip_addr:
-            final_result = tk.Label(self, text="VICTORY", font=("Verdana", 48))
+            final_result = tk.Label(self, text='VICTORY', font=('Verdana', 48))
             final_result.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
-            label = tk.Label(self, text="You won the game".format(self.winner_ip), font=("Verdana", 18))
+            label = tk.Label(self, text='You won the game'.format(self.winner_ip), font=('Verdana', 18))
             label.pack(pady=10, padx=10)
         else:
-            final_result = tk.Label(self, text="LOSS", font=("Verdana", 48))
+            final_result = tk.Label(self, text='LOSS', font=('Verdana', 48))
             final_result.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-            label = tk.Label(self, text="{} won the game".format(self.winner_ip), font=("Verdana", 18))
+            label = tk.Label(self, text="{} won the game".format(self.winner_ip), font=('Verdana', 18))
             label.pack(pady=10, padx=10)
 
         self.user_stats = tk.Text(self, bd=1, bg='white smoke', fg='black',
@@ -352,6 +353,7 @@ class PostGame(tk.Frame):
         self.user_stats.place(relx=0.5, rely=0.75, anchor=tk.CENTER)
 
     def updateText(self):
+        self.user_stats.configure(state='normal')
         self.user_stats.delete('1.0', 'end')
         self.user_stats.insert(tk.INSERT, '                      :YOUR STATS:                   \n\n'
                                           'Time to answer : {} seconds\n'
@@ -363,7 +365,8 @@ class PostGame(tk.Frame):
                                        self.controller.player_stats[ACCURACY] * 10,
                                        self.controller.player_stats[USER_INPUT],
                                        self.controller.player_stats[SERVER_INPUT]))
-        self.user_stats.configure(state="disable")
+        self.user_stats.configure(state='disable')
+
 
 if __name__ == '__main__':
     game = TypeRacer()

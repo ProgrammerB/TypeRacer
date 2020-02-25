@@ -48,17 +48,12 @@ class Server:
             self.connected_clients.append(ClientData(client_addr))
 
     def interpretCall(self, server_call, client_addr):
-        if '.' in server_call:
-            server_call, data, test = server_call.split('.')
-            print(server_call)
-            print(data)
-            print(test)
+        if '|' in server_call:
+            server_call, data = server_call.split('|', 1)
 
         if server_call == CLIENT_CONNECT:
-            print('connected...')
             self.server.sendto(CONNECT_SUCCESS.encode('UTF-8'), client_addr)
         elif server_call == GAME_START:
-            print('Game started...')
             self.broadcast(GAME_START)
         elif server_call == GAME_OVER:
             pass # TODO: Implement GAME_OVER call to store score and flag in appropriate ClientData object
@@ -67,7 +62,6 @@ class Server:
             # self.server.sendto(IDLE, client_addr)
 
     def broadcast(self, server_call):
-        print('made it to broadcast')
         for client in self.connected_clients:
             self.server.sendto(server_call.encode('UTF-8'), client.address)
 
