@@ -317,7 +317,7 @@ class Help(tk.Frame):
                     '5. Once all players are finished, score is determined by accuracy and time to     \n'
                     '   answer.  Winner is then displayed along with all of your stats                 \n'
                     '                                                                                  \n'
-                    '________________________________________________________________________\n'
+                    '_______________________________________________________________________\n'
                     )
         text.configure(state='disable')
         text.pack()
@@ -331,26 +331,31 @@ class Help(tk.Frame):
 class GameScreen(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        self.controller = controller
+        self.controller = controller        #allows for connection and more interaction with other classes
         self.waiting_msg = 'Waiting For Host to start game...'
         self.timer = '0.00'
         self.tic = 0.00
         self.finish_time = 0.00
         self.stop_threads = False
 
+        #Button to get back to the Main Menu
         self.temp_button = ttk.Button(self, text="Main Menu", command=lambda: controller.showFrame(MainMenu))
         self.temp_button.place(relx=0.50, rely=0.5, anchor=tk.CENTER)
 
+        #The timer display (defaulted to present waiting message before game and timer actually start updating)
         self.time_display = tk.Label(self, font=('Verdana', 20), text='{}'.format(self.waiting_msg))
         self.time_display.place(relx=.50, rely=.10, anchor=tk.CENTER)
         self.timer_thread = thread.Thread(target=self.runTimer)
 
+        #The prompt text - takes input from SERVER_INPUT flag
         self.text_to_type = tk.Label(self, text=self.controller.player_stats[SERVER_INPUT], font=('Verdana', 11))
         self.text_to_type.place(relx=.50, rely=.30, anchor=tk.CENTER)
 
+        #Box which player/user types the corresponding prompt in
         self.typing_box = tk.Text(self)
         self.typing_box.place(height=50, width=400, relx=.50, rely=.75, anchor=tk.CENTER)
 
+        #When 'Enter' is pressed retrieve the input from the typing_box and run onEnterPressed function
         self.typing_box.bind('<Return>', self.onEnterPressed, self.retrieve_input)
 
     def runTimerThread(self):
@@ -363,14 +368,18 @@ class GameScreen(tk.Frame):
             self.update()
             time.sleep(.025)
 
+    #used with above 'typing_box' - uses get() method to retrieve data and strip it of newline characters
     def retrieve_input(self, event=None):
         user_input = self.typing_box.get('1.0', 'end-1c')
         user_input.strip('\n')
         return user_input
 
+    #uses Sequence Matcher from difflib library to compare 2 strings and return a metric/ratio for similarity
     def getScore(self, a, b):
         similarity_metric = SequenceMatcher(lambda x: x == ' ', a, b).ratio()
         self.controller.player_stats[ACCURACY] = similarity_metric
+
+        #score is calculated with more weight (**4) on accuracy to prompt with time still affecting score (/finish_time *1000)
         score = ((similarity_metric * 1) ** 4 / (self.controller.player_stats[FINISH_TIME])) * 1000
         if similarity_metric is 1.0:
             score = ((similarity_metric * 1.5) ** 4 / (self.controller.player_stats[FINISH_TIME])) * 1000

@@ -9,8 +9,8 @@ HOW TO USE TYPERACER:
 
 	1. Download typeracer.py and server.py along with bee_movie_script.txt
 		-any .txt file can be used if you search through the source code and change
-		 bee_movie_script.txt to [filename].txt.  Each line in the txt can be chosen randomly
-		 to be used as a prompt.
+		 bee_movie_script.txt to [filename].txt.  Each line in the txt has the 
+		 possibility of being chosen randomly to be used as a prompt.
 	2. Run 'typeracer.py' a terminal with Python installed or an IDE with Python
 		a) Type: "python typeracer.py" as terminal command. Hit Enter.
 		   (make sure you are in the right folder w/ all files in that one folder)
