@@ -20,13 +20,6 @@ SHUTDOWN = 'SHUTDOWN'
 TIMER_RUNNING = 'TIMER_RUNNING'
 RECENT_CONNECTION = 'RECENT_CONNECTION'
 
-# Game-related dict references
-FINISH_TIME = 'FINISH_TIME'
-ACCURACY = 'ACCURACY'
-SCORE = 'SCORE'
-USER_INPUT = 'USER'
-SERVER_INPUT = 'SERVER'
-
 
 class TypeRacer(tk.Tk):
     def __init__(self):
@@ -41,14 +34,6 @@ class TypeRacer(tk.Tk):
         self.flags = {}
         for flag in [HOST, CLIENT, GAME_RUNNING, SHUTDOWN, TIMER_RUNNING, RECENT_CONNECTION]:
             self.flags[flag] = False
-
-        self.player_stats = {
-            FINISH_TIME: 0.0,
-            ACCURACY: 0.0,
-            SCORE: 0.0,
-            USER_INPUT: 'None',
-            SERVER_INPUT: 'None'
-        }
 
         self.title('TypeRacer')
         self.resizable(False, False)
