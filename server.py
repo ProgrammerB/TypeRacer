@@ -74,8 +74,7 @@ class Server:
     def checkGameOver(self):
         if all(client.rec_game_over for client in self.connected_clients):
             print('Found game over')
-            self.checkWinner()
-            self.broadcast(GAME_OVER)
+            self.broadcast(WINNER + '|' + str(self.checkWinner()))
             return True
 
     def broadcast(self, server_call):
@@ -106,8 +105,9 @@ class Server:
 
     def checkWinner(self):
         winner = [high_score for high_score in self.connected_clients if high_score.score == max(client.score for client in self.connected_clients)]
-        winner[0].isWinner = True
-        print('Winner is: {}'.format(winner[0].address))
+        winner[0].is_winner = True
+        print(winner[0].address)
+        return winner[0].address[0]
 
     def randomSentence(self, fname):
         lines = open(fname).read().splitlines()

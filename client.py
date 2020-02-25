@@ -36,6 +36,7 @@ class TypeRacer(tk.Tk):
         self.server_thread = thread.Thread()
         self.listener_thread = thread.Thread()
 
+        self.client_ip = socket.gethostbyname(socket.gethostname())
         self.host_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         self.flags = {}
@@ -118,6 +119,14 @@ class TypeRacer(tk.Tk):
                 self.frames[GameScreen].runTimerThread()
         elif server_call == server.GAME_OVER:
             self.host_server.sendto(server.RECEIVE_GAME_OVER.encode('UTF-8'), (ip, port))
+        elif server_call == server.WINNER:
+            if str(self.client_ip) == data:
+                self.flags[WINNER] = True
+            else:
+                self.frames[PostGame].winner_ip = data
+
+            self.frames[PostGame].updateText()
+            self.showFrame(PostGame)
 
     # Deals with making sure everything closes properly when closing the window
     def onClosing(self):
@@ -319,9 +328,6 @@ class GameScreen(tk.Frame):
                                             '{:.3f}'.format(self.controller.player_stats[SCORE])).encode('UTF-8'),
                                            (self.controller.server.ip, self.controller.server.port))
 
-        self.controller.frames[PostGame].updateText()
-        self.controller.showFrame(PostGame)
-
 
 class PostGame(tk.Frame):
     def __init__(self, parent, controller):
@@ -330,8 +336,8 @@ class PostGame(tk.Frame):
 
         computer_name, ip_addr, port_number = controller.server.getHostInfo()
 
-        self.winner_ip = '10.20.0.161'  # TEST CODE: TO BE USED WITH IP FROM SERVER MSG
-        if self.winner_ip == ip_addr:
+        self.winner_ip = 'None'  # TEST CODE: TO BE USED WITH IP FROM SERVER MSG
+        if self.controller.flags[WINNER]:
             final_result = tk.Label(self, text='VICTORY', font=('Verdana', 48))
             final_result.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
             label = tk.Label(self, text='You won the game'.format(self.winner_ip), font=('Verdana', 18))
