@@ -121,7 +121,7 @@ class TypeRacer(tk.Tk):
                 self.flags[TIMER_RUNNING] = True
                 self.frames[GameScreen].runTimerThread()
         elif server_call == server.GAME_OVER:
-            print(server_call)
+            self.flags[GAME_RUNNING] = False
             self.host_server.sendto(server.RECEIVE_GAME_OVER.encode('UTF-8'), (ip, port))
         elif server_call == server.WINNER:
             if str(self.client_ip) == data:
