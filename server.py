@@ -97,10 +97,9 @@ class Server:
 
     def getHostInfo(self):
         try:
-            host = socket.gethostname()
-            self.ip = socket.gethostbyname(host)
-
-            return host, self.ip, self.port
+            host_name = socket.gethostname()
+            self.ip = socket.gethostbyname(host_name)
+            return host_name, self.ip, self.port
         except socket.error:
             print("Unable to get Hostname and/or IP Address")
 
