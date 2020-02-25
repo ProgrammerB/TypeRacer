@@ -40,10 +40,9 @@ class Server:
                 client_data, client_addr = self.server.recvfrom(1024)
                 self.checkClient(client_addr)
 
-                if client_data:
-                    self.interpretCall(client_data.decode('UTF-8'), client_addr)
-                    if self.checkGameOver():
-                        break
+                self.interpretCall(client_data.decode('UTF-8'), client_addr)
+                if self.checkGameOver():
+                    break
             except OSError:
                 self.shutdown()
                 break
