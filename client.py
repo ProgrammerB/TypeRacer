@@ -195,11 +195,18 @@ class JoinGame(tk.Frame):
         return_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
 
     def startGameAsClient(self, raw_server_info):
-        ip, port = raw_server_info.split(':', 1)
-        self.controller.client_flag = True
-        self.controller.clientSetup((ip, int(port)))
-        self.controller.listener_thread = thread.Thread(target=self.controller.serverListener,
-                                                        args=(ip, int(port))).start()
+        try:
+            ip, port = raw_server_info.split(':', 1)
+            self.controller.client_flag = True
+            self.controller.clientSetup((ip, int(port)))
+            self.controller.listener_thread = thread.Thread(target=self.controller.serverListener,
+                                                            args=(ip, int(port))).start()
+        except:
+            ip_label = tk.Label(self,
+                    text='Could not connect - Format may be incorrect',
+                    font=('Verdana',11),
+                    fg='red')
+            ip_label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
 
 
 class HostGame(tk.Frame):
@@ -281,11 +288,11 @@ class GameScreen(tk.Frame):
         self.temp_button = ttk.Button(self, text="Main Menu", command=lambda: controller.showFrame(MainMenu))
         self.temp_button.place(relx=0.50, rely=0.5, anchor=tk.CENTER)
 
-        self.time_display = tk.Label(self, text='0.00s'.format(self.timer))
+        self.time_display = tk.Label(self, font=('Verdana', 20),text='0.00s'.format(self.timer))
         self.time_display.place(relx=.50, rely=.10, anchor=tk.CENTER)
         self.timer_thread = thread.Thread(target=self.runTimer)
 
-        self.text_to_type = tk.Label(self, text=self.controller.player_stats[SERVER_INPUT])
+        self.text_to_type = tk.Label(self, text=self.controller.player_stats[SERVER_INPUT], font=('Verdana', 11))
         self.text_to_type.place(relx=.50, rely=.30, anchor=tk.CENTER)
 
         self.typing_box = tk.Text(self)
