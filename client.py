@@ -98,7 +98,7 @@ class TypeRacer(tk.Tk):
 
                     self.server.server.settimeout(5)
                     server_call, ip_addr = self.host_server.recvfrom(1024)
-                    self.interpretServer(server_call)
+                    self.interpretServer(server_call.decode('UTF-8'))
                 else:
                     self.host_server.sendto(server.IDLE.encode('UTF-8'), (ip, port))
                     self.flags[RECENT_CONNECTION] = True

@@ -54,8 +54,10 @@ class Server:
             print(test)
 
         if server_call == CLIENT_CONNECT:
+            print('connected...')
             self.server.sendto(CONNECT_SUCCESS.encode('UTF-8'), client_addr)
         elif server_call == GAME_START:
+            print('Game started...')
             self.broadcast(GAME_START)
         elif server_call == GAME_OVER:
             pass # TODO: Implement GAME_OVER call to store score and flag in appropriate ClientData object
@@ -64,6 +66,7 @@ class Server:
             # self.server.sendto(IDLE, client_addr)
 
     def broadcast(self, server_call):
+        print('made it to broadcast')
         for client in self.connected_clients:
             self.server.sendto(server_call.encode('UTF-8'), client.address)
 
@@ -103,6 +106,7 @@ class Server:
                 self.highest_score_ip = self.connected_clients[i]
                 self.highest_score = current_score
         return self.highest_score_ip
+
 
 class ClientData:
     def __init__(self, address, nickname=None):
