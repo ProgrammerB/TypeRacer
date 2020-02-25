@@ -112,7 +112,7 @@ class TypeRacer(tk.Tk):
         if server_call == server.GAME_START:
             print(server_call)
             self.flags[GAME_RUNNING] = True
-            self.player_stats[SERVER_INPUT] = data
+            self.player_stats[SERVER_INPUT] = data if data else 'Error retrieving text'
             self.frames[GameScreen].text_to_type.configure(text=self.player_stats[SERVER_INPUT])
 
             if not self.flags[TIMER_RUNNING]:
@@ -122,7 +122,7 @@ class TypeRacer(tk.Tk):
             print(server_call)
             self.host_server.sendto(server.RECEIVE_GAME_OVER.encode('UTF-8'), (ip, port))
         elif server_call == server.WINNER:
-            print(server_call)
+            print('[{}] {}'.format(data, server_call))
             if str(self.client_ip) == data:
                 self.flags[WINNER] = True
             else:
@@ -220,6 +220,7 @@ class JoinGame(tk.Frame):
                                 fg='red')
             label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
             self.after(4000, label.destroy)
+
 
 class HostGame(tk.Frame):
     def __init__(self, parent, controller):
