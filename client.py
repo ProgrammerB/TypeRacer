@@ -106,8 +106,13 @@ class TypeRacer(tk.Tk):
                 pass
 
     def interpretServer(self, server_call):
+        if '|' in server_call:
+            server_call, data = server_call.split('|', 1)
+
         if server_call == server.GAME_START:
             self.flags[GAME_RUNNING] = True
+            self.player_stats[SERVER_INPUT] = data
+            self.frames[GameScreen].text_to_type.configure(text=self.player_stats[SERVER_INPUT])
 
             if not self.flags[TIMER_RUNNING]:
                 self.flags[TIMER_RUNNING] = True
@@ -255,10 +260,9 @@ class GameScreen(tk.Frame):
         self.tic = 0.00
         self.finish_time = 0.00
         self.stop_threads = False
-        self.controller.player_stats[SERVER_INPUT] = 'Match This Sentence For Test'
-        self.user_input = ""
-        self.score = 0
-        self.accuracy = 0
+        # self.user_input = ""
+        # self.score = 0
+        # self.accuracy = 0
 
         self.temp_button = ttk.Button(self, text="Main Menu", command=lambda: controller.showFrame(MainMenu))
         self.temp_button.place(relx=0.50, rely=0.5, anchor=tk.CENTER)
@@ -267,7 +271,7 @@ class GameScreen(tk.Frame):
         self.time_display.place(relx=.50, rely=.10, anchor=tk.CENTER)
         self.timer_thread = thread.Thread(target=self.runTimer)
 
-        self.text_to_type = tk.Label(self, text='[TEXT GOES HERE]')
+        self.text_to_type = tk.Label(self, text=self.controller.player_stats[SERVER_INPUT])
         self.text_to_type.place(relx=.50, rely=.30, anchor=tk.CENTER)
 
         self.typing_box = tk.Text(self)

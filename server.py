@@ -56,7 +56,7 @@ class Server:
         if server_call == CLIENT_CONNECT:
             self.server.sendto(CONNECT_SUCCESS.encode('UTF-8'), client_addr)
         elif server_call == GAME_START:
-            self.broadcast(GAME_START)
+            self.broadcast(GAME_START + '|' + self.randomSentence('bee_movie_script.txt'))
         elif server_call == GAME_OVER:
             self.updateClient(client_addr, data, isFinished=True)
         elif server_call == IDLE:
@@ -102,7 +102,7 @@ class Server:
                 self.highest_score = current_score
         return self.highest_score_ip
 
-    def random_sentence(fname):
+    def randomSentence(self, fname):
         lines = open(fname).read().splitlines()
         return random.choice(lines)
 
