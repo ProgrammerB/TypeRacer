@@ -123,8 +123,14 @@ class TypeRacer(tk.Tk):
     def serverListener(self, ip, port):
         while not self.flags[SHUTDOWN]:
             try:
-                server_call, ip_addr = self.host_server.recvfrom(1024)
-                self.interpretServer(server_call.decode('UTF-8'), ip, port)
+                if self.flags[RECENT_CONNECTION]:
+                    self.flags[RECENT_CONNECTION] = False
+
+                    server_call, ip_addr = self.host_server.recvfrom(1024)
+                    self.interpretServer(server_call.decode('UTF-8'), ip, port)
+                else:
+                    self.host_server.sendto(server.IDLE.encode('UTF-8'), (ip, port))
+                    self.flags[RECENT_CONNECTION] = True
             except socket.error:
                 pass
 
@@ -162,8 +168,8 @@ class TypeRacer(tk.Tk):
             self.flags[TIMER_RUNNING] = False
 
             self.destroy()
-            self.server_thread.join()
             self.server.shutdown()
+            print(thread.enumerate())
         except:
             sys.exit(0)
 
