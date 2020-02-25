@@ -126,6 +126,7 @@ class TypeRacer(tk.Tk):
                 if self.flags[RECENT_CONNECTION]:
                     self.flags[RECENT_CONNECTION] = False
 
+                    self.host_server.settimeout(0.5)
                     server_call, ip_addr = self.host_server.recvfrom(1024)
                     self.interpretServer(server_call.decode('UTF-8'), ip, port)
                 else:
@@ -169,7 +170,6 @@ class TypeRacer(tk.Tk):
 
             self.destroy()
             self.server.shutdown()
-            print(thread.enumerate())
         except:
             sys.exit(0)
 
