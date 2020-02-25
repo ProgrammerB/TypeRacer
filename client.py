@@ -272,9 +272,6 @@ class GameScreen(tk.Frame):
         self.typing_box = tk.Text(self)
         self.typing_box.place(height=50, width=400, relx=.50, rely=.75, anchor=tk.CENTER)
 
-        self.reset_button = ttk.Button(self, text="Restart Game", command=lambda: controller.restartTypeRacer())
-        self.reset_button.place(relx=0.9, rely=0.9, anchor=tk.CENTER)
-
         self.typing_box.bind('<Return>', self.onEnterPressed, self.retrieve_input)
 
     def runTimerThread(self):
@@ -353,7 +350,6 @@ class PostGame(tk.Frame):
                                        self.controller.player_stats[SERVER_INPUT]))
 
         self.user_stats.place(relx=0.5, rely=0.75, anchor=tk.CENTER)
-        self.user_stats.configure(state="disable")
 
     def updateText(self):
         self.user_stats.delete('1.0', 'end')
@@ -367,7 +363,7 @@ class PostGame(tk.Frame):
                                        self.controller.player_stats[ACCURACY] * 10,
                                        self.controller.player_stats[USER_INPUT],
                                        self.controller.player_stats[SERVER_INPUT]))
-
+        self.user_stats.configure(state="disable")
 
 if __name__ == '__main__':
     game = TypeRacer()

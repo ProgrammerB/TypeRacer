@@ -1,4 +1,5 @@
 import socket
+import random
 import threading as thread
 import datetime
 from functools import partial
@@ -107,6 +108,9 @@ class Server:
                 self.highest_score = current_score
         return self.highest_score_ip
 
+    def random_sentence(fname):
+        lines = open(fname).read().splitlines()
+        return random.choice(lines)
 
 class ClientData:
     def __init__(self, address, nickname=None):
