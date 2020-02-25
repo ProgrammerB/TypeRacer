@@ -195,17 +195,24 @@ class JoinGame(tk.Frame):
         return_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
 
     def startGameAsClient(self, raw_server_info):
-        try:
-            ip, port = raw_server_info.split(':', 1)
-            self.controller.client_flag = True
-            self.controller.clientSetup((ip, int(port)))
-            self.controller.listener_thread = thread.Thread(target=self.controller.serverListener,
-                                                            args=(ip, int(port))).start()
-        except:
+        if raw_server_info:
+            try:
+                ip, port = raw_server_info.split(':', 1)
+                self.controller.client_flag = True
+                self.controller.clientSetup((ip, int(port)))
+                self.controller.listener_thread = thread.Thread(target=self.controller.serverListener,
+                                                                args=(ip, int(port))).start()
+            except:
+                ip_label = tk.Label(self,
+                        text='Could not connect - Format may be incorrect',
+                        font=('Verdana',11),
+                        fg='red')
+                ip_label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
+        else:
             ip_label = tk.Label(self,
-                    text='Could not connect - Format may be incorrect',
-                    font=('Verdana',11),
-                    fg='red')
+                                text='Could not connect - Format may be incorrect',
+                                font=('Verdana', 11),
+                                fg='red')
             ip_label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
 
 
@@ -343,17 +350,7 @@ class PostGame(tk.Frame):
 
         computer_name, ip_addr, port_number = controller.server.getHostInfo()
 
-        self.winner_ip = 'None'  # TEST CODE: TO BE USED WITH IP FROM SERVER MSG
-        if self.controller.flags[WINNER]:
-            final_result = tk.Label(self, text='VICTORY', font=('Verdana', 48))
-            final_result.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
-            label = tk.Label(self, text='You won the game'.format(self.winner_ip), font=('Verdana', 18))
-            label.pack(pady=10, padx=10)
-        else:
-            final_result = tk.Label(self, text='LOSS', font=('Verdana', 48))
-            final_result.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-            label = tk.Label(self, text="{} won the game".format(self.winner_ip), font=('Verdana', 18))
-            label.pack(pady=10, padx=10)
+        self.winner_ip = 'None'
 
         self.user_stats = tk.Text(self, bd=1, bg='white smoke', fg='black',
                                   height=7, width=60, wrap=tk.WORD, padx=5, pady=5)
@@ -371,6 +368,16 @@ class PostGame(tk.Frame):
         self.user_stats.place(relx=0.5, rely=0.75, anchor=tk.CENTER)
 
     def updateText(self):
+        if self.controller.flags[WINNER]:
+            self.final_result = tk.Label(self, text='VICTORY', font=('Verdana', 48))
+            self.final_result.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
+            self.label = tk.Label(self, text='You won the game'.format(self.winner_ip), font=('Verdana', 18))
+            self.label.pack(pady=10, padx=10)
+        else:
+            self.final_result = tk.Label(self, text='LOSS', font=('Verdana', 48))
+            self.final_result.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
+            self.label = tk.Label(self, text="{} won the game".format(self.winner_ip), font=('Verdana', 18))
+            self.label.pack(pady=10, padx=10)
         self.user_stats.configure(state='normal')
         self.user_stats.delete('1.0', 'end')
         self.user_stats.insert(tk.INSERT, '                      :YOUR STATS:                   \n\n'
