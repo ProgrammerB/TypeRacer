@@ -98,14 +98,15 @@ class TypeRacer(tk.Tk):
 
                     self.server.server.settimeout(5)
                     server_call, ip_addr = self.host_server.recvfrom(1024)
-                    self.interpretServer(server_call.decode('UTF-8'))
+                    self.interpretServer(server_call.decode('UTF-8'), ip, port)
                 else:
                     self.host_server.sendto(server.IDLE.encode('UTF-8'), (ip, port))
                     self.flags[RECENT_CONNECTION] = True
             except socket.error:
                 pass
 
-    def interpretServer(self, server_call):
+    def interpretServer(self, server_call, ip, port):
+        print(server_call)
         if '|' in server_call:
             server_call, data = server_call.split('|', 1)
 
@@ -117,6 +118,8 @@ class TypeRacer(tk.Tk):
             if not self.flags[TIMER_RUNNING]:
                 self.flags[TIMER_RUNNING] = True
                 self.frames[GameScreen].runTimerThread()
+        elif server_call == server.GAME_OVER:
+            self.host_server.sendto(server.IDLE.encode('UTF-8'), (ip, port))
 
     # Deals with making sure everything closes properly when closing the window
     def onClosing(self):
@@ -266,9 +269,6 @@ class GameScreen(tk.Frame):
         self.tic = 0.00
         self.finish_time = 0.00
         self.stop_threads = False
-        # self.user_input = ""
-        # self.score = 0
-        # self.accuracy = 0
 
         self.temp_button = ttk.Button(self, text="Main Menu", command=lambda: controller.showFrame(MainMenu))
         self.temp_button.place(relx=0.50, rely=0.5, anchor=tk.CENTER)
@@ -306,7 +306,6 @@ class GameScreen(tk.Frame):
         score = ((similarity_metric * 1) ** 4 / (self.controller.player_stats[FINISH_TIME])) * 1000
         if similarity_metric is 1.0:
             score = ((similarity_metric * 1.5) ** 4 / (self.controller.player_stats[FINISH_TIME])) * 1000
-        print('{} is the similarity metric'.format(similarity_metric))
         return score
 
     def onEnterPressed(self, event=None):
@@ -316,7 +315,6 @@ class GameScreen(tk.Frame):
         self.controller.player_stats[USER_INPUT] = self.retrieve_input(self)
         self.controller.player_stats[SCORE] = self.getScore(self.controller.player_stats[USER_INPUT],
                                                             self.controller.player_stats[SERVER_INPUT])
-        print(self.controller.player_stats[SCORE])
 
         self.controller.host_server.sendto((server.GAME_OVER + '|' +
                                             '{:.3f}'.format(self.controller.player_stats[SCORE])).encode('UTF-8'),
@@ -332,10 +330,8 @@ class PostGame(tk.Frame):
         self.controller = controller
 
         computer_name, ip_addr, port_number = controller.server.getHostInfo()
-        print(controller.player_stats[FINISH_TIME])
 
         self.winner_ip = '10.20.0.161'  # TEST CODE: TO BE USED WITH IP FROM SERVER MSG
-        print(ip_addr)
         if self.winner_ip == ip_addr:
             final_result = tk.Label(self, text='VICTORY', font=('Verdana', 48))
             final_result.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
