@@ -61,7 +61,10 @@ class Server:
             self.updateClient(client_addr, data, isFinished=True)
         elif server_call == IDLE:
             pass
-            # self.server.sendto(IDLE, client_addr)
+
+    def checkGameOver(self):
+        if all(client.isFinished for client in self.connected_clients):
+            self.broadcast(GAME_OVER)
 
     def broadcast(self, server_call):
         for client in self.connected_clients:
@@ -84,9 +87,6 @@ class Server:
             self.server.bind((self.ip, self.port))
 
         self.mainLoop()
-
-    def checkGameOver(self):
-        pass
 
     def shutdown(self):
         self.shutdown_signal = True
