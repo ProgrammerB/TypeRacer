@@ -1,6 +1,5 @@
 import socket
 import sys
-import os
 import tkinter as tk
 from tkinter import ttk
 import server
@@ -88,7 +87,7 @@ class TypeRacer(tk.Tk):
         else:
             server_call = server.IDLE
 
-        self.host_server.sendto(server_call, server_info)
+        self.host_server.sendto(server_call.encode('UTF-8'), server_info)
         self.showFrame(GameScreen)
 
     def serverListener(self, ip, port):
@@ -97,11 +96,11 @@ class TypeRacer(tk.Tk):
                 if self.flags[RECENT_CONNECTION]:
                     self.flags[RECENT_CONNECTION] = False
 
-                    self.host_server.settimeout(5)
+                    self.server.server.settimeout(5)
                     server_call, ip_addr = self.host_server.recvfrom(1024)
                     self.interpretServer(server_call)
                 else:
-                    self.host_server.sendto(server.IDLE, (ip, port))
+                    self.host_server.sendto(server.IDLE.encode('UTF-8'), (ip, port))
                     self.flags[RECENT_CONNECTION] = True
             except socket.error:
                 pass
@@ -125,10 +124,6 @@ class TypeRacer(tk.Tk):
             self.server.shutdown()
         except:
             sys.exit(0)
-
-    def restartTypeRacer(self):
-        print("Program Restarted...")
-        os.execl(sys.executable, sys.executable, *sys.argv)
 
 
 class MainMenu(tk.Frame):
@@ -300,9 +295,9 @@ class GameScreen(tk.Frame):
     def getScore(self, a, b):
         similarity_metric = SequenceMatcher(lambda x: x == " ", a, b).ratio()
         self.controller.player_stats[ACCURACY] = similarity_metric
-        score = ((similarity_metric * 1) ** (4) / (self.controller.player_stats[FINISH_TIME])) * 1000
+        score = ((similarity_metric * 1) ** 4 / (self.controller.player_stats[FINISH_TIME])) * 1000
         if similarity_metric is 1.0:
-            score = ((similarity_metric * 1.5) ** (4) / (self.controller.player_stats[FINISH_TIME])) * 1000
+            score = ((similarity_metric * 1.5) ** 4 / (self.controller.player_stats[FINISH_TIME])) * 1000
         print("{} is the similarity metric".format(similarity_metric))
         return score
 
@@ -314,6 +309,10 @@ class GameScreen(tk.Frame):
         self.controller.player_stats[SCORE] = self.getScore(self.controller.player_stats[USER_INPUT],
                                                             self.controller.player_stats[SERVER_INPUT])
         print(self.controller.player_stats[FINISH_TIME])
+
+        self.controller.host_server.sendto((server.GAME_OVER + '.' +
+                                            str(self.controller.player_stats[SCORE])).encode('UTF-8'),
+                                           (self.controller.server.ip, self.controller.server.port))
 
         self.controller.frames[PostGame].updateText()
         self.controller.showFrame(PostGame)
@@ -341,16 +340,17 @@ class PostGame(tk.Frame):
             label.pack(pady=10, padx=10)
 
         self.user_stats = tk.Text(self, bd=1, bg='white smoke', fg='black',
-                             height=7, width=60, wrap=tk.WORD, padx=5, pady=5)
+                                  height=7, width=60, wrap=tk.WORD, padx=5, pady=5)
         self.user_stats.insert(tk.INSERT, '                      :YOUR STATS:                   \n\n'
-                                     'Time to answer : {} seconds\n'
-                                     'Score          : {} points\n'
-                                     'Accuracy       : {}%\n'
-                                     'Your Sentence  : {}\n'
-                                     'Server Sentence: {}'
-                          .format(self.controller.player_stats[FINISH_TIME], self.controller.player_stats[SCORE],
-                                  self.controller.player_stats[ACCURACY] * 10, self.controller.player_stats[USER_INPUT],
-                                  self.controller.player_stats[SERVER_INPUT]))
+                                          'Time to answer : {} seconds\n'
+                                          'Score          : {} points\n'
+                                          'Accuracy       : {}%\n'
+                                          'Your Sentence  : {}\n'
+                                          'Server Sentence: {}'
+                               .format(self.controller.player_stats[FINISH_TIME], self.controller.player_stats[SCORE],
+                                       self.controller.player_stats[ACCURACY] * 10,
+                                       self.controller.player_stats[USER_INPUT],
+                                       self.controller.player_stats[SERVER_INPUT]))
 
         self.user_stats.place(relx=0.5, rely=0.75, anchor=tk.CENTER)
         self.user_stats.configure(state="disable")
@@ -358,14 +358,15 @@ class PostGame(tk.Frame):
     def updateText(self):
         self.user_stats.delete('1.0', 'end')
         self.user_stats.insert(tk.INSERT, '                      :YOUR STATS:                   \n\n'
-                                     'Time to answer : {} seconds\n'
-                                     'Score          : {} points\n'
-                                     'Accuracy       : {}%\n'
-                                     'Your Sentence  : {}\n'
-                                     'Server Sentence: {}'
-                          .format(self.controller.player_stats[FINISH_TIME], self.controller.player_stats[SCORE],
-                                  self.controller.player_stats[ACCURACY] * 10, self.controller.player_stats[USER_INPUT],
-                                  self.controller.player_stats[SERVER_INPUT]))
+                                          'Time to answer : {} seconds\n'
+                                          'Score          : {} points\n'
+                                          'Accuracy       : {}%\n'
+                                          'Your Sentence  : {}\n'
+                                          'Server Sentence: {}'
+                               .format(self.controller.player_stats[FINISH_TIME], self.controller.player_stats[SCORE],
+                                       self.controller.player_stats[ACCURACY] * 10,
+                                       self.controller.player_stats[USER_INPUT],
+                                       self.controller.player_stats[SERVER_INPUT]))
 
 
 if __name__ == '__main__':
