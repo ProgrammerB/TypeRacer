@@ -38,6 +38,8 @@ class TypeRacer(tk.Tk):
 
         self.client_ip = socket.gethostbyname(socket.gethostname())
         self.host_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.connect_ip = '127.0.0.1'
+        self.connect_port = 5557
 
         self.flags = {}
         for flag in [HOST, CLIENT, GAME_RUNNING, SHUTDOWN, TIMER_RUNNING, RECENT_CONNECTION, WINNER]:
@@ -201,6 +203,8 @@ class JoinGame(tk.Frame):
         if raw_server_info:
             try:
                 ip, port = raw_server_info.split(':', 1)
+                self.controller.connect_ip = ip
+                self.controller.connect_port = port
                 self.controller.client_flag = True
                 self.controller.clientSetup((ip, int(port)))
                 self.controller.listener_thread = thread.Thread(target=self.controller.serverListener,
@@ -226,7 +230,7 @@ class HostGame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        host_name, server_ip, port_number = controller.server.getHostInfo()
+        host_name, controller.connect_ip, controller.connect_port = controller.server.getHostInfo()
 
         title = tk.Label(self,
                          text='Host Setup',
@@ -240,14 +244,14 @@ class HostGame(tk.Frame):
                                     'players. Click \'Start\' when all players connected\n\n'
                                     'Computer Name : {}\n'
                                     'IP Address    : {}\n'
-                                    'Port          : {}'.format(host_name, server_ip, port_number))
+                                    'Port          : {}'.format(host_name, controller.connect_ip, controller.connect_port))
 
         help_text.place(relx=0.5, rely=0.45, anchor=tk.CENTER)
         help_text.configure(state='disable')
 
         start_button = ttk.Button(self,
                                   text='Start',
-                                  command=lambda: self.controller.clientSetup((server_ip, port_number)))
+                                  command=lambda: self.controller.clientSetup((controller.connect_ip, controller.connect_port)))
         start_button.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
         return_button = ttk.Button(self,
@@ -347,7 +351,7 @@ class GameScreen(tk.Frame):
 
         self.controller.host_server.sendto((server.GAME_OVER + '|' +
                                             '{:.3f}'.format(self.controller.player_stats[SCORE])).encode('UTF-8'),
-                                           (self.controller.server.ip, self.controller.server.port))
+                                           (self.controller.connect_ip, self.controller.connect_port))
 
 
 class PostGame(tk.Frame):
