@@ -96,7 +96,6 @@ class TypeRacer(tk.Tk):
                 if self.flags[RECENT_CONNECTION]:
                     self.flags[RECENT_CONNECTION] = False
 
-                    self.server.server.settimeout(5)
                     server_call, ip_addr = self.host_server.recvfrom(1024)
                     self.interpretServer(server_call.decode('UTF-8'), ip, port)
                 else:
@@ -106,7 +105,6 @@ class TypeRacer(tk.Tk):
                 pass
 
     def interpretServer(self, server_call, ip, port):
-        print(server_call)
         if '|' in server_call:
             server_call, data = server_call.split('|', 1)
 
@@ -119,7 +117,7 @@ class TypeRacer(tk.Tk):
                 self.flags[TIMER_RUNNING] = True
                 self.frames[GameScreen].runTimerThread()
         elif server_call == server.GAME_OVER:
-            self.host_server.sendto(server.IDLE.encode('UTF-8'), (ip, port))
+            self.host_server.sendto(server.RECEIVE_GAME_OVER.encode('UTF-8'), (ip, port))
 
     # Deals with making sure everything closes properly when closing the window
     def onClosing(self):
@@ -129,6 +127,7 @@ class TypeRacer(tk.Tk):
             self.flags[TIMER_RUNNING] = False
 
             self.destroy()
+            self.server_thread.join()
             self.server.shutdown()
         except:
             sys.exit(0)
@@ -243,7 +242,7 @@ class Help(tk.Frame):
                                '                                                               PLAYER                                 \n'
                                '1. Press "Join Game" on the Main Menu                                             \n'
                                '2. Get the IP number and port number from the Host                                \n'
-                               '      -type it in the format [IP #]:[port #]                                      \n'
+                               '      -type it in in format [IP #]:[port #]                                       \n'
                                '3. Once the host starts the game, a sentence will popup with the text box below it\n'
                                '4. Once done typing, HIT ENTER                                                    \n'
                                '5. Once all players are finished, score is determined by accuracy and time to     \n'

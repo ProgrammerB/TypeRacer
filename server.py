@@ -34,18 +34,16 @@ class Server:
             try:
                 client_data, client_addr = self.checkForResponse()
                 self.checkClient(client_addr)
-                print(all(client.rec_game_over for client in self.connected_clients))
+                # print(all(client.rec_game_over for client in self.connected_clients))
 
                 self.interpretCall(client_data.decode('UTF-8'), client_addr)
-                if self.checkGameOver() and all(client.recGameOver for client in self.connected_clients):
-                    print(all(client.rec_game_over for client in self.connected_clients))
+                if self.checkGameOver():
                     break
             except OSError:
                 self.shutdown()
                 break
 
     def checkForResponse(self):
-        self.server.settimeout(1)
         client_data, client_addr = self.server.recvfrom(1024)
         return client_data, client_addr
 
@@ -63,15 +61,18 @@ class Server:
         elif server_call == GAME_START:
             self.broadcast(GAME_START + '|' + self.randomSentence('bee_movie_script.txt'))
         elif server_call == GAME_OVER:
+            print('Game over interpreted')
             self.updateClient(client_addr, data, isFinished=True)
+            self.server.sendto(GAME_OVER.encode('UTF-8'), client_addr)
         elif server_call == RECEIVE_GAME_OVER:
+            print('made it to receive game over')
             client = self.findClient(client_addr)
             client.rec_game_over = True
         elif server_call == IDLE:
-            pass
+            self.server.sendto(IDLE.encode('UTF-8'), client_addr)
 
     def checkGameOver(self):
-        if all(client.is_finished for client in self.connected_clients):
+        if all(client.rec_game_over for client in self.connected_clients):
             print('Found game over')
             self.checkWinner()
             self.broadcast(GAME_OVER)
@@ -124,7 +125,6 @@ class Server:
                 return client
         else:
             return False
-
 
 
 class ClientData:
