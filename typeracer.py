@@ -44,6 +44,7 @@ class TypeRacer(tk.Tk):
     https://pythonprogramming.net/object-oriented-programming-crash-course-tkinter/?completed=/tkinter-depth-tutorial-making-actual-program/
     - Used this to get the basic idea of using tkinter in terms of classes
     """
+
     def __init__(self):
         tk.Tk.__init__(self)
         self.protocol('WM_DELETE_WINDOW', self.onClosing)
@@ -139,17 +140,24 @@ class TypeRacer(tk.Tk):
         if '|' in server_call:
             server_call, data = server_call.split('|', 1)
 
+        # if server_sends msg ("GAME_START") then do this
         if server_call == server.GAME_START:
             self.flags[GAME_RUNNING] = True
             self.player_stats[SERVER_INPUT] = data if data else 'Error retrieving text'
             self.frames[GameScreen].text_to_type.configure(text=self.player_stats[SERVER_INPUT])
 
+            # if TIMER_RUNNING flag not set to true - set to true
             if not self.flags[TIMER_RUNNING]:
                 self.flags[TIMER_RUNNING] = True
                 self.frames[GameScreen].runTimerThread()
+
+        # if server sends "GAME_OVER" msg - let program know game is not running (set flag to false)
+        # let server know "GAME_OVER" msg was received
         elif server_call == server.GAME_OVER:
             self.flags[GAME_RUNNING] = False
             self.host_server.sendto(server.RECEIVE_GAME_OVER.encode('UTF-8'), (ip, port))
+
+        # if server sends message "WINNER" (you are the winner) -
         elif server_call == server.WINNER:
             print('Mine: {} Winner: {}'.format(self.client_ip, data))
             if str(self.client_ip) == data:
@@ -182,6 +190,7 @@ class MainMenu(tk.Frame):
     host_button: Moves HostGame frame to the front, and starts the server via controller.runServer()
     help_button: Moves HelpMenu frame to the front
     """
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         host_name, ip, port = controller.server.getHostInfo()
@@ -190,13 +199,16 @@ class MainMenu(tk.Frame):
         label = tk.Label(self, bg="black", fg="#abb0b4", text="Type Racer", font=("Verdana", 48))
         label.pack(pady=10, padx=10)
 
+        # Join Game button - brings JoinGame frame to the front
         join_button = ttk.Button(self, text="Join Game", command=lambda: controller.showFrame(JoinGame))
         join_button.place(height=40, width=300, relx=0.50, rely=0.35, anchor=tk.CENTER)
 
+        # Host Game button - brings HostGame frame to the front
         host_button = ttk.Button(self, text="Host Game",
                                  command=lambda: [controller.showFrame(HostGame), controller.runServer((ip, port))])
         host_button.place(height=40, width=300, relx=0.50, rely=0.50, anchor=tk.CENTER)
 
+        # Help page button - brings Help frame to the front
         help_button = ttk.Button(self, text="Help", command=lambda: controller.showFrame(Help))
         help_button.place(height=40, width=300, relx=0.50, rely=0.65, anchor=tk.CENTER)
 
@@ -278,14 +290,16 @@ class HostGame(tk.Frame):
                                     'players. Click \'Start\' when all players connected\n\n'
                                     'Computer Name : {}\n'
                                     'IP Address    : {}\n'
-                                    'Port          : {}'.format(host_name, controller.connect_ip, controller.connect_port))
+                                    'Port          : {}'.format(host_name, controller.connect_ip,
+                                                                controller.connect_port))
 
         help_text.place(relx=0.5, rely=0.45, anchor=tk.CENTER)
         help_text.configure(state='disable')
 
         start_button = ttk.Button(self,
                                   text='Start',
-                                  command=lambda: self.controller.clientSetup((controller.connect_ip, controller.connect_port)))
+                                  command=lambda: self.controller.clientSetup(
+                                      (controller.connect_ip, controller.connect_port)))
         start_button.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
         return_button = ttk.Button(self,
@@ -330,55 +344,58 @@ class Help(tk.Frame):
 class GameScreen(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        self.controller = controller        #allows for connection and more interaction with other classes
+        self.controller = controller  # allows for connection and more interaction with other classes
         self.waiting_msg = 'Waiting For Host to start game...'
         self.timer = '0.00'
         self.tic = 0.00
         self.finish_time = 0.00
         self.stop_threads = False
 
-        #Button to get back to the Main Menu
+        # Button to get back to the Main Menu
         self.temp_button = ttk.Button(self, text="Main Menu", command=lambda: controller.showFrame(MainMenu))
         self.temp_button.place(relx=0.50, rely=0.5, anchor=tk.CENTER)
 
-        #The timer display (defaulted to present waiting message before game and timer actually start updating)
+        # The timer display (defaulted to present waiting message before game and timer actually start updating)
         self.time_display = tk.Label(self, font=('Verdana', 20), text='{}'.format(self.waiting_msg))
         self.time_display.place(relx=.50, rely=.10, anchor=tk.CENTER)
         self.timer_thread = thread.Thread(target=self.runTimer)
 
-        #The prompt text - takes input from SERVER_INPUT flag
+        # The prompt text - takes input from SERVER_INPUT flag
         self.text_to_type = tk.Label(self, text=self.controller.player_stats[SERVER_INPUT], font=('Verdana', 11))
         self.text_to_type.place(relx=.50, rely=.30, anchor=tk.CENTER)
 
-        #Box which player/user types the corresponding prompt in
+        # Box which player/user types the corresponding prompt in
         self.typing_box = tk.Text(self)
         self.typing_box.place(height=50, width=400, relx=.50, rely=.75, anchor=tk.CENTER)
 
-        #When 'Enter' is pressed retrieve the input from the typing_box and run onEnterPressed function
+        # When 'Enter' is pressed retrieve the input from the typing_box and run onEnterPressed function
         self.typing_box.bind('<Return>', self.onEnterPressed, self.retrieve_input)
 
+    # when called - starts the (alreacy created) timer_thread, which allows for a running timer display w/rest of the gui
+    # still being usable
     def runTimerThread(self):
         self.timer_thread.start()
         self.tic = time.time()
 
+    # when the TIMER_RUNNING flag is caught by ServerListener and interpreted by ServerInterpreter (broadcasted by
     def runTimer(self):
         while self.controller.flags[TIMER_RUNNING]:
             self.time_display.configure(text='{:.2f}s'.format(time.time() - self.tic))
             self.update()
             time.sleep(.025)
 
-    #used with above 'typing_box' - uses get() method to retrieve data and strip it of newline characters
+    # used with above 'typing_box' - uses get() method to retrieve data and strip it of newline characters
     def retrieve_input(self, event=None):
         user_input = self.typing_box.get('1.0', 'end-1c')
         user_input.strip('\n')
         return user_input
 
-    #uses Sequence Matcher from difflib library to compare 2 strings and return a metric/ratio for similarity
+    # uses Sequence Matcher from difflib library to compare 2 strings and return a metric/ratio for similarity
     def getScore(self, a, b):
         similarity_metric = SequenceMatcher(lambda x: x == ' ', a, b).ratio()
         self.controller.player_stats[ACCURACY] = similarity_metric
 
-        #score is calculated with more weight (**4) on accuracy to prompt with time still affecting score (/finish_time *1000)
+        # score is calculated with more weight (**4) on accuracy to prompt with time still affecting score (/finish_time *1000)
         score = ((similarity_metric * 1) ** 4 / (self.controller.player_stats[FINISH_TIME])) * 1000
         if similarity_metric is 1.0:
             score = ((similarity_metric * 1.5) ** 4 / (self.controller.player_stats[FINISH_TIME])) * 1000
