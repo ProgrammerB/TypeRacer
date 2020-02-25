@@ -281,7 +281,7 @@ class Help(tk.Frame):
                     '5. Once all players are finished, score is determined by accuracy and time to     \n'
                     '   answer.  Winner is then displayed along with all of your stats                 \n'
                     '                                                                                  \n'
-                    '_______________________________________________________________________\n'
+                    '________________________________________________________________________\n'
                     )
         text.configure(state='disable')
         text.pack()
