@@ -99,7 +99,7 @@ class Server:
             if current_score > self.highest_score:
                 self.highest_score_ip = self.connected_clients[i]
                 self.highest_score = current_score
-        return
+        return self.highest_score_ip
 
 class ClientData:
     def __init__(self, address, nickname=None):
