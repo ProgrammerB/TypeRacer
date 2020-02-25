@@ -203,18 +203,20 @@ class JoinGame(tk.Frame):
                 self.controller.listener_thread = thread.Thread(target=self.controller.serverListener,
                                                                 args=(ip, int(port))).start()
             except:
-                ip_label = tk.Label(self,
+                label = tk.Label(self,
                         text='Could not connect - Format may be incorrect',
                         font=('Verdana',11),
                         fg='red')
-                ip_label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
+                label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
+                self.after(4000, label.destroy)
+
         else:
-            ip_label = tk.Label(self,
-                                text='Could not connect - Format may be incorrect',
+            label = tk.Label(self,
+                                text='Nothing was entered...',
                                 font=('Verdana', 11),
                                 fg='red')
-            ip_label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
-
+            label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
+            self.after(4000, label.destroy)
 
 class HostGame(tk.Frame):
     def __init__(self, parent, controller):
