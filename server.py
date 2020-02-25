@@ -4,16 +4,16 @@ import datetime
 from functools import partial
 
 # Server Calls
-HOST_CONNECT = 'HOST_CONNECT'.encode('UTF-8')
-GAME_START = 'GAME_START'.encode('UTF-8')
-SHUTDOWN = 'SHUTDOWN'.encode('UTF-8')
-GAME_OVER = 'GAME_OVER'.encode('UTF-8')
-CLIENT_CONNECT = 'FIRST_CONNECTION'.encode('UTF-8')
-CONNECT_SUCCESS = 'CONNECT_SUCCESS'.encode('UTF-8')
-CONNECT_FAIL = 'CONNECT_FAIL'.encode('UTF-8')
-IDLE = 'IDLE'.encode('UTF-8')
-WINNER = 'WINNER'.encode('UTF-8')
-LOSER = 'LOSER'.encode('UTF-8')
+HOST_CONNECT = 'HOST_CONNECT'
+GAME_START = 'GAME_START'
+SHUTDOWN = 'SHUTDOWN'
+GAME_OVER = 'GAME_OVER'
+CLIENT_CONNECT = 'FIRST_CONNECTION'
+CONNECT_SUCCESS = 'CONNECT_SUCCESS'
+CONNECT_FAIL = 'CONNECT_FAIL'
+IDLE = 'IDLE'
+WINNER = 'WINNER'
+LOSER = 'LOSER'
 
 
 class Server:
@@ -33,10 +33,10 @@ class Server:
                 client_data, client_addr = self.checkForResponse()
                 self.checkClient(client_addr)
 
-                self.interpretCall(client_data, client_addr)
+                self.interpretCall(client_data.decode('UTF-8'), client_addr)
             except OSError:
                 self.shutdown()
-                break;
+                break
 
     def checkForResponse(self):
         client_data, client_addr = self.server.recvfrom(1024)
@@ -48,10 +48,13 @@ class Server:
 
     def interpretCall(self, server_call, client_addr):
         if '.' in server_call:
-            print('can be parsed')
+            server_call, data, test = server_call.split('.')
+            print(server_call)
+            print(data)
+            print(test)
 
         if server_call == CLIENT_CONNECT:
-            self.server.sendto(CONNECT_SUCCESS, client_addr)
+            self.server.sendto(CONNECT_SUCCESS.encode('UTF-8'), client_addr)
         elif server_call == GAME_START:
             self.broadcast(GAME_START)
         elif server_call == GAME_OVER:
@@ -62,7 +65,7 @@ class Server:
 
     def broadcast(self, server_call):
         for client in self.connected_clients:
-            self.server.sendto(server_call, client.address)
+            self.server.sendto(server_call.encode('UTF-8'), client.address)
 
     def getHostInfo(self):
         try:

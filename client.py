@@ -308,7 +308,7 @@ class GameScreen(tk.Frame):
         self.controller.player_stats[USER_INPUT] = self.retrieve_input(self)
         self.controller.player_stats[SCORE] = self.getScore(self.controller.player_stats[USER_INPUT],
                                                             self.controller.player_stats[SERVER_INPUT])
-        print(self.controller.player_stats[FINISH_TIME])
+        print(self.controller.player_stats[SCORE])
 
         self.controller.host_server.sendto((server.GAME_OVER + '.' +
                                             str(self.controller.player_stats[SCORE])).encode('UTF-8'),
