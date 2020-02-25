@@ -38,6 +38,7 @@ class Server:
             try:
                 self.server.settimeout(0.5)
                 client_data, client_addr = self.server.recvfrom(1024)
+
                 self.checkClient(client_addr)
 
                 self.interpretCall(client_data.decode('UTF-8'), client_addr)
@@ -48,40 +49,58 @@ class Server:
                 break
 
     def checkClient(self, client_addr):
+        """Takes address of client, checks it against the connected_clients, adds to list if not found"""
         if client_addr not in [client.address for client in self.connected_clients]:
             self.connected_clients.append(ClientData(client_addr))
 
     def interpretCall(self, server_call, client_addr):
+        """Responds to client(s) depending on the server_call sent"""
         if '|' in server_call:
             server_call, data = server_call.split('|', 1)
 
         if server_call == CLIENT_CONNECT:
             self.server.sendto(CONNECT_SUCCESS.encode('UTF-8'), client_addr)
+
         elif server_call == GAME_START:
             self.broadcast(GAME_START + '|' + self.randomSentence('bee_movie_script.txt'))
+
         elif server_call == GAME_OVER:
             self.updateClient(client_addr, data, is_finished=True)
             self.server.sendto(GAME_OVER.encode('UTF-8'), client_addr)
+
         elif server_call == RECEIVE_GAME_OVER:
             client = self.findClient(client_addr)
             client.rec_game_over = True
+
         elif server_call == IDLE:
             self.server.sendto(IDLE.encode('UTF-8'), client_addr)
 
     def checkGameOver(self):
+        """Tells if all clients confirmed they received the GAME_OVER call
+
+        If True, then send WINNER flag w/ the winning clients IP attached to all connected clients
+        :returns True or False
+        """
         if all(client.rec_game_over for client in self.connected_clients):
             self.broadcast(WINNER + '|' + str(self.checkWinner()))
             return True
+        else:
+            return False
 
     def broadcast(self, server_call):
+        """Sends something to all clients in connected_clients[]
+
+        server_call: Text to send
+        """
         for client in self.connected_clients:
             self.server.sendto(server_call.encode('UTF-8'), client.address)
 
     def getHostInfo(self):
         try:
-            host_name = socket.gethostname()
-            self.ip = socket.gethostbyname(host_name)
-            return host_name, self.ip, self.port
+            host = socket.gethostname()
+            self.ip = socket.gethostbyname(host)
+
+            return host, self.ip, self.port
         except socket.error:
             print("Unable to get Hostname and/or IP Address")
 
