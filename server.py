@@ -35,6 +35,7 @@ class Server:
                 self.checkClient(client_addr)
 
                 self.interpretCall(client_data.decode('UTF-8'), client_addr)
+                self.checkGameOver()
             except OSError:
                 self.shutdown()
                 break
@@ -45,6 +46,7 @@ class Server:
 
     def checkClient(self, client_addr):
         if client_addr not in self.connected_clients:
+            print('Added client {}'.format(client_addr))
             self.connected_clients.append(ClientData(client_addr))
 
     def interpretCall(self, server_call, client_addr):
@@ -83,6 +85,9 @@ class Server:
 
         self.mainLoop()
 
+    def checkGameOver(self):
+        pass
+
     def shutdown(self):
         self.shutdown_signal = True
         self.server.close()
@@ -105,6 +110,7 @@ class Server:
         for client in self.connected_clients:
             if client_addr == client.address:
                 client.score = score
+                print('Score: {}'.format(client.score))
                 client.isFinished = isFinished
 
 
