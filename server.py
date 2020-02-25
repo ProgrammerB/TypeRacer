@@ -12,6 +12,8 @@ CLIENT_CONNECT = 'FIRST_CONNECTION'.encode('UTF-8')
 CONNECT_SUCCESS = 'CONNECT_SUCCESS'.encode('UTF-8')
 CONNECT_FAIL = 'CONNECT_FAIL'.encode('UTF-8')
 IDLE = 'IDLE'.encode('UTF-8')
+WINNER = 'WINNER'.encode('UTF-8')
+LOSER = 'LOSER'.encode('UTF-8')
 
 
 class Server:
@@ -90,7 +92,8 @@ class ClientData:
         self.address = address
         self.name = nickname
 
-        self.start_time = 0.0
+        self.score = 0.0
+        self.isWinner = False
 
 
 def prepData(data):

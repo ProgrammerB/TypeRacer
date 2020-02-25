@@ -19,6 +19,7 @@ GAME_RUNNING = 'GAME_RUNNING'
 SHUTDOWN = 'SHUTDOWN'
 TIMER_RUNNING = 'TIMER_RUNNING'
 RECENT_CONNECTION = 'RECENT_CONNECTION'
+WINNER = 'WINNER'
 
 # Game-related dict references
 FINISH_TIME = 'FINISH_TIME'
@@ -39,7 +40,7 @@ class TypeRacer(tk.Tk):
         self.host_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         self.flags = {}
-        for flag in [HOST, CLIENT, GAME_RUNNING, SHUTDOWN, TIMER_RUNNING, RECENT_CONNECTION]:
+        for flag in [HOST, CLIENT, GAME_RUNNING, SHUTDOWN, TIMER_RUNNING, RECENT_CONNECTION, WINNER]:
             self.flags[flag] = False
 
         self.player_stats = {
@@ -310,7 +311,8 @@ class GameScreen(tk.Frame):
         toc = time.time()
         self.controller.player_stats[FINISH_TIME] = toc - self.tic
         self.controller.player_stats[USER_INPUT] = self.retrieve_input(self)
-        self.controller.player_stats[SCORE] = self.getScore(self.controller.player_stats[USER_INPUT], self.controller.player_stats[SERVER_INPUT])
+        self.controller.player_stats[SCORE] = self.getScore(self.controller.player_stats[USER_INPUT],
+                                                            self.controller.player_stats[SERVER_INPUT])
         print(self.controller.player_stats[FINISH_TIME])
 
         self.controller.frames[PostGame].updateText()
