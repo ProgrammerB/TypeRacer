@@ -93,11 +93,13 @@ class Server:
 
     def checkWinner(self):
         self.highest_score = 0.0
+        self.highest_score_ip = ""
         for i in range(self.connected_client):
             current_score = ClientData(self.connected_clients).score
             if current_score > self.highest_score:
+                self.highest_score_ip = self.connected_clients[i]
                 self.highest_score = current_score
-        return self.highest_score
+        return
 
 class ClientData:
     def __init__(self, address, nickname=None):
