@@ -49,8 +49,8 @@ class TypeRacer(tk.Tk):
             FINISH_TIME: 0.0,
             ACCURACY: 0.0,
             SCORE: 0.0,
-            USER_INPUT: 'Get Ready',
-            SERVER_INPUT: 'None'
+            USER_INPUT: 'None',
+            SERVER_INPUT: 'GET READY'
         }
 
         self.title('TypeRacer')
@@ -297,8 +297,8 @@ class GameScreen(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-
-        self.timer = 'Waiting on Host to Start Game'
+        self.waiting_msg = 'Waiting For Host to start game...'
+        self.timer = '0.00'
         self.tic = 0.00
         self.finish_time = 0.00
         self.stop_threads = False
@@ -306,7 +306,7 @@ class GameScreen(tk.Frame):
         self.temp_button = ttk.Button(self, text="Main Menu", command=lambda: controller.showFrame(MainMenu))
         self.temp_button.place(relx=0.50, rely=0.5, anchor=tk.CENTER)
 
-        self.time_display = tk.Label(self, font=('Verdana', 20), text='0.00s'.format(self.timer))
+        self.time_display = tk.Label(self, font=('Verdana', 20), text='{}'.format(self.waiting_msg))
         self.time_display.place(relx=.50, rely=.10, anchor=tk.CENTER)
         self.timer_thread = thread.Thread(target=self.runTimer)
 
