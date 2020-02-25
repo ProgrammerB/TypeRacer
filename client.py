@@ -186,11 +186,18 @@ class JoinGame(tk.Frame):
         return_button.place(relx=0.50, rely=0.9, anchor=tk.CENTER)
 
     def startGameAsClient(self, raw_server_info):
-        ip, port = raw_server_info.split(':', 1)
-        self.controller.client_flag = True
-        self.controller.clientSetup((ip, int(port)))
-        self.controller.listener_thread = thread.Thread(target=self.controller.serverListener,
-                                                        args=(ip, int(port))).start()
+        try:
+            ip, port = raw_server_info.split(':', 1)
+            self.controller.client_flag = True
+            self.controller.clientSetup((ip, int(port)))
+            self.controller.listener_thread = thread.Thread(target=self.controller.serverListener,
+                                                            args=(ip, int(port))).start()
+        except:
+            ip_label = tk.Label(self,
+                    text='Could not connect - Format may be incorrect',
+                    font=('Verdana',11),
+                    fg='red')
+            ip_label.place(relx=0.5, rely=0.57, anchor=tk.CENTER)
 
 
 class HostGame(tk.Frame):
