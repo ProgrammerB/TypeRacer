@@ -328,17 +328,16 @@ class PostGame(tk.Frame):
         print(controller.player_stats[FINISH_TIME])
 
         self.winner_ip = "10.20.0.161"  # TEST CODE: TO BE USED WITH IP FROM SERVER MSG
-        self.winner_name = "ASSHOLEx1234xMcMUFFINmaNzz"
         print(ip_addr)
         if self.winner_ip == ip_addr:
             final_result = tk.Label(self, text="VICTORY", font=("Verdana", 48))
             final_result.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
-            label = tk.Label(self, text="You won the game".format(self.winner_name), font=("Verdana", 18))
+            label = tk.Label(self, text="You won the game".format(self.winner_ip), font=("Verdana", 18))
             label.pack(pady=10, padx=10)
         else:
             final_result = tk.Label(self, text="LOSS", font=("Verdana", 48))
             final_result.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-            label = tk.Label(self, text="{} won the game".format(self.winner_name), font=("Verdana", 18))
+            label = tk.Label(self, text="{} won the game".format(self.winner_ip), font=("Verdana", 18))
             label.pack(pady=10, padx=10)
 
         self.user_stats = tk.Text(self, bd=1, bg='white smoke', fg='black',
@@ -354,7 +353,7 @@ class PostGame(tk.Frame):
                                   self.controller.player_stats[SERVER_INPUT]))
 
         self.user_stats.place(relx=0.5, rely=0.75, anchor=tk.CENTER)
-        # self.user_stats.configure(state="disable")
+        self.user_stats.configure(state="disable")
 
     def updateText(self):
         self.user_stats.delete('1.0', 'end')
