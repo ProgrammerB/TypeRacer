@@ -45,7 +45,7 @@ class Server:
         return client_data, client_addr
 
     def checkClient(self, client_addr):
-        if client_addr not in self.connected_clients:
+        if client_addr not in [client.address for client in self.connected_clients]:
             print('Added client {}'.format(client_addr))
             self.connected_clients.append(ClientData(client_addr))
 
