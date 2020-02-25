@@ -44,6 +44,7 @@ class Server:
 
     def checkForResponse(self):
         client_data, client_addr = self.server.recvfrom(1024)
+        print('<{}> {}'.format(client_addr, client_data))
         return client_data, client_addr
 
     def checkClient(self, client_addr):
@@ -68,7 +69,7 @@ class Server:
             client = self.findClient(client_addr)
             client.rec_game_over = True
         elif server_call == IDLE:
-            self.server.sendto(IDLE.encode('UTF-8'), client_addr)
+            pass # self.server.sendto(IDLE.encode('UTF-8'), client_addr)
 
     def checkGameOver(self):
         if all(client.rec_game_over for client in self.connected_clients):
